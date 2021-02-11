@@ -81,14 +81,14 @@ def create_data_frame_from_file(folder_name,meta_data_filename, parse_meta_data_
                 L2err.append("{:.7e}".format(float(ll[-1])))
             elif keywords[5] in line:
                 ll = line.strip().split()
-                num_proc.append(int(ll[7]))
+                total_time.append("{:.4e}".format(float(ll[2])))
             elif keywords[6] in line:
                 ll = line.strip().split()
-                total_time.append("{:.4e}".format(float(ll[2])))
+                num_proc.append(int(ll[7]))
         f.close()
     
         
-    dict_vals = [nu, p, h, dof, ksp, solveTime,snes_dof_per_sec,L2err,total_time]
+    dict_vals = [nu, p, h, dof, ksp, solveTime,snes_dof_per_sec,L2err,total_time,num_proc]
     ordered_dict = OrderedDict()
     for i in range(len(df_col_names)):
         ordered_dict[df_col_names[i]] = dict_vals[i]
@@ -210,8 +210,8 @@ if __name__ == "__main__":
     folder_name = 'log_files'
     meta_data_filename = 'run.info'
     parse_meta_data_fun = parse_meta_linE #function pointer
-    keywords = ['Global nodes','Total KSP Iterations', 'SNES Solve Time', 'DoFs/Sec in SNES', 'L2 Error', './elasticity', 'Time (sec):']
-    df_col_names= ['nu', 'p', 'h', 'DoF', '#CG', 'Solve Time(s)', 'MDoFs/Sec', 'L2 Error', 'Total Time']
+    keywords = ['Global nodes','Total KSP Iterations', 'SNES Solve Time', 'DoFs/Sec in SNES', 'L2 Error', 'Time (sec):', './elasticity', ]
+    df_col_names= ['nu', 'p', 'h', 'DoF', '#CG', 'Solve Time(s)', 'MDoFs/Sec', 'L2 Error', 'Total Time','np']
     parse_content_fun = parse_linE #function pointer
     #pass in do (make a struct/class later)
     appCtx = 3
