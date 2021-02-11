@@ -223,12 +223,9 @@ if __name__ == "__main__":
     pd.set_option('display.max_colwidth', -1)
 
     print(df)
-##
-##    df.to_csv (r'data.csv', index = False, header=True)
-##    
-##    chart = alt.Chart(df)
-##    alt.Chart(df).mark_point().encode(x='p',y='h')
-##    #chart.save('test.png')
+
+    df.to_csv (r'data.csv', index = False, header=True)
+
 
 
 
