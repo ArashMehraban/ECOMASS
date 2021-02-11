@@ -5,7 +5,7 @@ import numpy as np
 from collections import OrderedDict
 from glob import glob
 
-def create_data_frame_from_file(folder_name,meta_data_filename, parse_meta_data_fun, parse_content_fun, keywords):
+def create_data_frame_from_file(folder_name,meta_data_filename, parse_meta_data_fun, parse_content_fun, keywords, df_col_names, appCtx):
     
     fnames=[]
     for f in os.listdir(folder_name):
@@ -13,91 +13,96 @@ def create_data_frame_from_file(folder_name,meta_data_filename, parse_meta_data_
             fnames.append(f)
     
     logFiles = sorted(fnames)
-    appCtx = len(logFiles)
     
     #change directory to where log files are
     os.chdir(os.path.join(os.getcwd(),folder_name))
     
     #parse user meta-data using user-defined function
-    meta_parsed = parse_meta_linE(meta_data_filename, appCtx)
-    
-    #print(meta_parsed)
+    nu_vals, h_lght, odh, odp = parse_meta_linE(meta_data_filename)
 
-##    #lack of meta_data => a little bit of a hard code. Update later!
-##    maxh = vals[1]
-##    minh = vals[0]
-##    maxp = vals[3]
-##    minp = vals[2]
-##    nus = vals[4:]
-##    sz_nu = len(vals[4:])
-##    
-##    #for Matlab plotting use (same data as in run.info)
-##    ffm= open("for-Matlab.txt","w+")
-##    for i in range(len(vals)):
-##        ffm.write("%f\r\n" %vals[i])
-##    ffm.close()
-##    
-##    per_p = []
-##    per_h = []
-##    for i in range(sz_nu):
-##        for j in range(minh, maxh+1):
-##            per_p.append(i+1)
-##            per_h.append(j)
-##   
-##    p = per_p * sz_nu
-##    h = per_h * sz_nu
-##    
-##    nu=[]
-##    num_nus = (maxh-minh+1)*(maxp-minp+1)
-##    for i in range(sz_nu):
-##        for j in range(num_nus):
-##            nu.append(nus[i])
-##    print(maxh,minh,maxp,minp)
-##    ksp = [] 
-##    solveTime = []
-##    snes_dof_per_sec = []
-##    L2err = []
-##    for filename in logFiles:
-##        f = open(filename, 'r')
-##        lines = f.readlines()
-##        for line in lines:
-##            if keywords[0] in line:
-##                ll = line.strip().split()
-##                ksp.append(int(ll[-1]))
-##            elif keywords[1] in line:
-##                ll = line.strip().split()
-##                solveTime.append(float(ll[-3]))
-##            elif keywords[2] in line:
-##                ll = line.strip().split()
-##                snes_dof_per_sec.append(float(ll[-3]))
-##            elif keywords[3] in line:
-##                ll = line.strip().split()
-##                L2err.append("{:.7e}".format(float(ll[-1])))
-##        f.close()
-##   
-##    
-##    print(len(p), len(h), len(nu), len(ksp), len(solveTime), len(snes_dof_per_sec), len(L2err))
-##    dict_keys = ['nu', 'p', 'h']
-##    for k in keywords:
-##        dict_keys.append(k)
-##
-##    
-##    dict_vals = [nu, p, h, ksp, solveTime,snes_dof_per_sec,L2err]
-##    ordered_dict = OrderedDict()
-##    for i in range(len(dict_keys)):
-##        ordered_dict[dict_keys[i]] = dict_vals[i]
-##
-##    dataFrame = pd.DataFrame(ordered_dict)
+    h = []
+    for k in odh:
+        for el in odh[k]:
+            h.append(digitize(el))
+
+    psz=[]
+    for k in odh:
+        psz.append(len(odh[k]))
+
+    ps=[]
+    for k in odp:
+        for el in odp[k]:
+            ps.append(el)
+
+    p=[]
+    for i in range(len(ps)):
+        for j in range(psz[i]):
+            p.append(ps[i])
+
+    nusz=[] 
+    counter = 0
+    for item in h_lght:
+        k=0
+        for i in range(item):
+            k=k+psz[counter]
+            counter=counter+1
+        nusz.append(k)
+
+    nu = []
+    for i in range(len(nu_vals)):
+        for j in range(nusz[i]):
+            nu.append(nu_vals[i])
+
+    dof = []        
+    ksp = [] 
+    solveTime = []
+    snes_dof_per_sec = []
+    L2err = []
+    num_proc = []
+    total_time = []
+    for filename in logFiles:
+        f = open(filename, 'r')
+        lines = f.readlines()
+        for line in lines:
+            if keywords[0] in line:
+                ll = line.strip().split()
+                dof.append(int(ll[-1])*appCtx)
+            elif keywords[1] in line:
+                ll = line.strip().split()
+                ksp.append(int(ll[-1]))
+            elif keywords[2] in line:
+                ll = line.strip().split()
+                solveTime.append(float(ll[-3]))
+            elif keywords[3] in line:
+                ll = line.strip().split()
+                snes_dof_per_sec.append(float(ll[-3]))
+            elif keywords[4] in line:
+                ll = line.strip().split()
+                L2err.append("{:.7e}".format(float(ll[-1])))
+            elif keywords[5] in line:
+                ll = line.strip().split()
+                num_proc.append(int(ll[7]))
+            elif keywords[6] in line:
+                ll = line.strip().split()
+                total_time.append("{:.4e}".format(float(ll[2])))
+        f.close()
+    
+        
+    dict_vals = [nu, p, h, dof, ksp, solveTime,snes_dof_per_sec,L2err,total_time]
+    ordered_dict = OrderedDict()
+    for i in range(len(df_col_names)):
+        ordered_dict[df_col_names[i]] = dict_vals[i]
+
+    dataFrame = pd.DataFrame(ordered_dict)
 
     #change durectory back to where you were
     os.chdir("..")
 
-##    return dataFrame
-    return
+    return dataFrame
 
 
 
-def parse_meta_linE(meta_data_filename,appCtx):
+def parse_meta_linE(meta_data_filename):
 
     #run.info format:
     #
@@ -155,10 +160,6 @@ def parse_meta_linE(meta_data_filename,appCtx):
         for thing in md_lst[idx]:
             partial_var_names.append('hp'+thing+'nu')
 
-    print(p_idx)
-    print(len(md_lst))
-    print(h_lght)
-    print(deg_vals)
     nu_str = md_lst[2]
 
     #running out of time:
@@ -186,8 +187,8 @@ def parse_meta_linE(meta_data_filename,appCtx):
     odh = OrderedDict()
     for i in range(len(vnm)):
         odh[vnm[i]] = md_lst[data_idx[i]]
-    print(odh)
-    return odh , odp 
+    
+    return nu_vals, h_lght, odh , odp 
     
         
 def parse_linE():
@@ -209,16 +210,19 @@ if __name__ == "__main__":
     folder_name = 'log_files'
     meta_data_filename = 'run.info'
     parse_meta_data_fun = parse_meta_linE #function pointer
-    keywords = ['Global nodes','Total KSP Iterations', 'SNES Solve Time', 'DoFs/Sec in SNES', 'L2 Error', './elasticity']
+    keywords = ['Global nodes','Total KSP Iterations', 'SNES Solve Time', 'DoFs/Sec in SNES', 'L2 Error', './elasticity', 'Time (sec):']
+    df_col_names= ['nu', 'p', 'h', 'DoF', '#CG', 'Solve Time(s)', 'MDoFs/Sec', 'L2 Error', 'Total Time']
     parse_content_fun = parse_linE #function pointer
+    #pass in do (make a struct/class later)
+    appCtx = 3
 
-    df = create_data_frame_from_file(folder_name,meta_data_filename, parse_meta_data_fun, parse_content_fun, keywords)
+    df = create_data_frame_from_file(folder_name,meta_data_filename, parse_meta_data_fun, parse_content_fun, keywords, df_col_names, appCtx)
 
-##    pd.set_option("display.max_rows", None, "display.max_columns", None)
-##    pd.set_option('display.width', None)
-##    pd.set_option('display.max_colwidth', -1)
-##
-##    print(df)
+    pd.set_option("display.max_rows", None, "display.max_columns", None)
+    pd.set_option('display.width', None)
+    pd.set_option('display.max_colwidth', -1)
+
+    print(df)
 ##
 ##    df.to_csv (r'data.csv', index = False, header=True)
 ##    
