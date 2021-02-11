@@ -1,0 +1,1036 @@
+
+-- Elastisticy Example - libCEED + PETSc --
+  libCEED:
+    libCEED Backend                    : /cpu/self/xsmm/blocked
+  Problem:
+    Problem Name                       : Hyper elasticity small strain
+    Forcing Function                   : None
+  Mesh:
+    File                               : ./meshes/cyl-hole_1994e_4ss_us.exo
+    Number of 1D Basis Nodes (p)       : 5
+    Number of 1D Quadrature Points (q) : 5
+    Global nodes                       : 163964
+    Owned nodes                        : 432
+    DoF per node                       : 3
+  Multigrid:
+    Type                               : P-multigrid, logarithmic coarsening
+    Number of Levels                   : 3
+    Level 0 (coarse):
+      Number of 1D Basis Nodes (p)     : 2
+      Global Nodes                     : 3212
+      Owned Nodes                      : 0
+    Level 2 (fine):
+      Number of 1D Basis Nodes (p)     : 5
+      Global Nodes                     : 163964
+      Owned Nodes                      : 432
+0 Load Increment
+  0 SNES Function norm 8.716362037218e+05 
+  1 SNES Function norm 1.282008579847e+01 
+  2 SNES Function norm 2.470797840967e-04 
+SNES Object: 192 MPI processes
+  type: newtonls
+  maximum iterations=50, maximum function evaluations=10000
+  tolerances: relative=1e-08, absolute=1e-50, solution=1e-08
+  total number of linear solver iterations=74
+  total number of function evaluations=5
+  norm schedule ALWAYS
+  SNESLineSearch Object: 192 MPI processes
+    type: cp
+    maxstep=1.000000e+08, minlambda=1.000000e-12
+    tolerances: relative=1.000000e-08, absolute=1.000000e-15, lambda=1.000000e-08
+    maximum iterations=1
+  KSP Object: (outer_) 192 MPI processes
+    type: cg
+    maximum iterations=10000, initial guess is zero
+    tolerances:  relative=1e-10, absolute=1e-50, divergence=10000.
+    left preconditioning
+    using NATURAL norm type for convergence test
+  PC Object: (outer_) 192 MPI processes
+    type: mg
+      type is MULTIPLICATIVE, levels=3 cycles=v
+        Cycles per PCApply=1
+        Not using Galerkin computed coarse grid matrices
+    Coarse grid solver -- level -------------------------------
+      KSP Object: (coarse_) 192 MPI processes
+        type: preonly
+        maximum iterations=10000, initial guess is zero
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (coarse_) 192 MPI processes
+        type: gamg
+          type is MULTIPLICATIVE, levels=3 cycles=v
+            Cycles per PCApply=1
+            Using externally compute Galerkin coarse grid matrices
+            GAMG specific options
+              Threshold for dropping small values in graph on each level =         0.        
+              Threshold scaling factor for each level not specified = 1.
+              AGG specific options
+                Symmetric graph false
+                Number of levels to square graph 1
+                Number smoothing steps 1
+              Complexity:    grid = 1.02563
+        Coarse grid solver -- level -------------------------------
+          KSP Object: (coarse_mg_coarse_) 192 MPI processes
+            type: preonly
+            maximum iterations=10000, initial guess is zero
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_coarse_) 192 MPI processes
+            type: bjacobi
+              number of blocks = 192
+              Local solver is the same for all blocks, as in the following KSP and PC objects on rank 0:
+            KSP Object: (coarse_mg_coarse_sub_) 1 MPI processes
+              type: preonly
+              maximum iterations=1, initial guess is zero
+              tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+              left preconditioning
+              using NONE norm type for convergence test
+            PC Object: (coarse_mg_coarse_sub_) 1 MPI processes
+              type: lu
+                out-of-place factorization
+                tolerance for zero pivot 2.22045e-14
+                using diagonal shift on blocks to prevent zero pivot [INBLOCKS]
+                matrix ordering: nd
+                factor fill ratio given 5., needed 1.13208
+                  Factored matrix follows:
+                    Mat Object: 1 MPI processes
+                      type: seqaij
+                      rows=36, cols=36, bs=3
+                      package used to perform factorization: petsc
+                      total: nonzeros=1080, allocated nonzeros=1080
+                      total number of mallocs used during MatSetValues calls=0
+                        using I-node routines: found 9 nodes, limit used is 5
+              linear system matrix = precond matrix:
+              Mat Object: 1 MPI processes
+                type: seqaij
+                rows=36, cols=36, bs=3
+                total: nonzeros=954, allocated nonzeros=954
+                total number of mallocs used during MatSetValues calls=0
+                  using I-node routines: found 12 nodes, limit used is 5
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=36, cols=36, bs=3
+              total: nonzeros=954, allocated nonzeros=954
+              total number of mallocs used during MatSetValues calls=0
+                using I-node (on process 0) routines: found 12 nodes, limit used is 5
+        Down solver (pre-smoother) on level 1 -------------------------------
+          KSP Object: (coarse_mg_levels_1_) 192 MPI processes
+            type: chebyshev
+              eigenvalue estimates used:  min = 0.160398, max = 1.76438
+              eigenvalues estimate via gmres min 0.0380404, max 1.60398
+              eigenvalues estimated using gmres with translations  [0. 0.1; 0. 1.1]
+              KSP Object: (coarse_mg_levels_1_esteig_) 192 MPI processes
+                type: gmres
+                  restart=30, using Classical (unmodified) Gram-Schmidt Orthogonalization with no iterative refinement
+                  happy breakdown tolerance 1e-30
+                maximum iterations=10, initial guess is zero
+                tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+                left preconditioning
+                using PRECONDITIONED norm type for convergence test
+              estimating eigenvalues using noisy right hand side
+            maximum iterations=2, nonzero initial guess
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_levels_1_) 192 MPI processes
+            type: sor
+              type = local_symmetric, iterations = 1, local iterations = 1, omega = 1.
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=291, cols=291, bs=3
+              total: nonzeros=14967, allocated nonzeros=14967
+              total number of mallocs used during MatSetValues calls=0
+                using I-node (on process 0) routines: found 6 nodes, limit used is 5
+        Up solver (post-smoother) same as down solver (pre-smoother)
+        Down solver (pre-smoother) on level 2 -------------------------------
+          KSP Object: (coarse_mg_levels_2_) 192 MPI processes
+            type: chebyshev
+              eigenvalue estimates used:  min = 0.21775, max = 2.39525
+              eigenvalues estimate via gmres min 0.0272134, max 2.1775
+              eigenvalues estimated using gmres with translations  [0. 0.1; 0. 1.1]
+              KSP Object: (coarse_mg_levels_2_esteig_) 192 MPI processes
+                type: gmres
+                  restart=30, using Classical (unmodified) Gram-Schmidt Orthogonalization with no iterative refinement
+                  happy breakdown tolerance 1e-30
+                maximum iterations=10, initial guess is zero
+                tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+                left preconditioning
+                using PRECONDITIONED norm type for convergence test
+              estimating eigenvalues using noisy right hand side
+            maximum iterations=2, nonzero initial guess
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_levels_2_) 192 MPI processes
+            type: sor
+              type = local_symmetric, iterations = 1, local iterations = 1, omega = 1.
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=9636, cols=9636, bs=3
+              total: nonzeros=621270, allocated nonzeros=621270
+              total number of mallocs used during MatSetValues calls=0
+                not using I-node (on process 0) routines
+        Up solver (post-smoother) same as down solver (pre-smoother)
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: mpiaij
+          rows=9636, cols=9636, bs=3
+          total: nonzeros=621270, allocated nonzeros=621270
+          total number of mallocs used during MatSetValues calls=0
+            not using I-node (on process 0) routines
+    Down solver (pre-smoother) on level 1 -------------------------------
+      KSP Object: (outer_mg_levels_1_) 192 MPI processes
+        type: chebyshev
+          eigenvalue estimates used:  min = 0.289174, max = 3.18091
+          eigenvalues estimate via cg min 0.0505198, max 2.89174
+          eigenvalues estimated using cg with translations  [0. 0.1; 0. 1.1]
+          KSP Object: (outer_mg_levels_1_esteig_) 192 MPI processes
+            type: cg
+            maximum iterations=10, initial guess is zero
+            tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using PRECONDITIONED norm type for convergence test
+          estimating eigenvalues using noisy right hand side
+        maximum iterations=3, nonzero initial guess
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (outer_mg_levels_1_) 192 MPI processes
+        type: jacobi
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: shell
+          rows=66750, cols=66750
+    Up solver (post-smoother) same as down solver (pre-smoother)
+    Down solver (pre-smoother) on level 2 -------------------------------
+      KSP Object: (outer_mg_levels_2_) 192 MPI processes
+        type: chebyshev
+          eigenvalue estimates used:  min = 0.354642, max = 3.90106
+          eigenvalues estimate via cg min 0.0664746, max 3.54642
+          eigenvalues estimated using cg with translations  [0. 0.1; 0. 1.1]
+          KSP Object: (outer_mg_levels_2_esteig_) 192 MPI processes
+            type: cg
+            maximum iterations=10, initial guess is zero
+            tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using PRECONDITIONED norm type for convergence test
+          estimating eigenvalues using noisy right hand side
+        maximum iterations=3, nonzero initial guess
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (outer_mg_levels_2_) 192 MPI processes
+        type: jacobi
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: shell
+          rows=491892, cols=491892
+    Up solver (post-smoother) same as down solver (pre-smoother)
+    linear system matrix = precond matrix:
+    Mat Object: 192 MPI processes
+      type: shell
+      rows=491892, cols=491892
+1 Load Increment
+  0 SNES Function norm 8.716362037232e+05 
+  1 SNES Function norm 1.284809386256e+01 
+  2 SNES Function norm 2.597009709679e-04 
+SNES Object: 192 MPI processes
+  type: newtonls
+  maximum iterations=50, maximum function evaluations=10000
+  tolerances: relative=1e-08, absolute=1e-50, solution=1e-08
+  total number of linear solver iterations=75
+  total number of function evaluations=5
+  norm schedule ALWAYS
+  SNESLineSearch Object: 192 MPI processes
+    type: cp
+    maxstep=1.000000e+08, minlambda=1.000000e-12
+    tolerances: relative=1.000000e-08, absolute=1.000000e-15, lambda=1.000000e-08
+    maximum iterations=1
+  KSP Object: (outer_) 192 MPI processes
+    type: cg
+    maximum iterations=10000, initial guess is zero
+    tolerances:  relative=1e-10, absolute=1e-50, divergence=10000.
+    left preconditioning
+    using NATURAL norm type for convergence test
+  PC Object: (outer_) 192 MPI processes
+    type: mg
+      type is MULTIPLICATIVE, levels=3 cycles=v
+        Cycles per PCApply=1
+        Not using Galerkin computed coarse grid matrices
+    Coarse grid solver -- level -------------------------------
+      KSP Object: (coarse_) 192 MPI processes
+        type: preonly
+        maximum iterations=10000, initial guess is zero
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (coarse_) 192 MPI processes
+        type: gamg
+          type is MULTIPLICATIVE, levels=3 cycles=v
+            Cycles per PCApply=1
+            Using externally compute Galerkin coarse grid matrices
+            GAMG specific options
+              Threshold for dropping small values in graph on each level =         0.        
+              Threshold scaling factor for each level not specified = 1.
+              AGG specific options
+                Symmetric graph false
+                Number of levels to square graph 1
+                Number smoothing steps 1
+              Complexity:    grid = 1.02563
+        Coarse grid solver -- level -------------------------------
+          KSP Object: (coarse_mg_coarse_) 192 MPI processes
+            type: preonly
+            maximum iterations=10000, initial guess is zero
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_coarse_) 192 MPI processes
+            type: bjacobi
+              number of blocks = 192
+              Local solver is the same for all blocks, as in the following KSP and PC objects on rank 0:
+            KSP Object: (coarse_mg_coarse_sub_) 1 MPI processes
+              type: preonly
+              maximum iterations=1, initial guess is zero
+              tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+              left preconditioning
+              using NONE norm type for convergence test
+            PC Object: (coarse_mg_coarse_sub_) 1 MPI processes
+              type: lu
+                out-of-place factorization
+                tolerance for zero pivot 2.22045e-14
+                using diagonal shift on blocks to prevent zero pivot [INBLOCKS]
+                matrix ordering: nd
+                factor fill ratio given 5., needed 1.13208
+                  Factored matrix follows:
+                    Mat Object: 1 MPI processes
+                      type: seqaij
+                      rows=36, cols=36, bs=3
+                      package used to perform factorization: petsc
+                      total: nonzeros=1080, allocated nonzeros=1080
+                      total number of mallocs used during MatSetValues calls=0
+                        using I-node routines: found 9 nodes, limit used is 5
+              linear system matrix = precond matrix:
+              Mat Object: 1 MPI processes
+                type: seqaij
+                rows=36, cols=36, bs=3
+                total: nonzeros=954, allocated nonzeros=954
+                total number of mallocs used during MatSetValues calls=0
+                  using I-node routines: found 12 nodes, limit used is 5
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=36, cols=36, bs=3
+              total: nonzeros=954, allocated nonzeros=954
+              total number of mallocs used during MatSetValues calls=0
+                using I-node (on process 0) routines: found 12 nodes, limit used is 5
+        Down solver (pre-smoother) on level 1 -------------------------------
+          KSP Object: (coarse_mg_levels_1_) 192 MPI processes
+            type: chebyshev
+              eigenvalue estimates used:  min = 0.160395, max = 1.76435
+              eigenvalues estimate via gmres min 0.0380395, max 1.60395
+              eigenvalues estimated using gmres with translations  [0. 0.1; 0. 1.1]
+              KSP Object: (coarse_mg_levels_1_esteig_) 192 MPI processes
+                type: gmres
+                  restart=30, using Classical (unmodified) Gram-Schmidt Orthogonalization with no iterative refinement
+                  happy breakdown tolerance 1e-30
+                maximum iterations=10, initial guess is zero
+                tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+                left preconditioning
+                using PRECONDITIONED norm type for convergence test
+              estimating eigenvalues using noisy right hand side
+            maximum iterations=2, nonzero initial guess
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_levels_1_) 192 MPI processes
+            type: sor
+              type = local_symmetric, iterations = 1, local iterations = 1, omega = 1.
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=291, cols=291, bs=3
+              total: nonzeros=14967, allocated nonzeros=14967
+              total number of mallocs used during MatSetValues calls=0
+                using I-node (on process 0) routines: found 6 nodes, limit used is 5
+        Up solver (post-smoother) same as down solver (pre-smoother)
+        Down solver (pre-smoother) on level 2 -------------------------------
+          KSP Object: (coarse_mg_levels_2_) 192 MPI processes
+            type: chebyshev
+              eigenvalue estimates used:  min = 0.21766, max = 2.39426
+              eigenvalues estimate via gmres min 0.0272045, max 2.1766
+              eigenvalues estimated using gmres with translations  [0. 0.1; 0. 1.1]
+              KSP Object: (coarse_mg_levels_2_esteig_) 192 MPI processes
+                type: gmres
+                  restart=30, using Classical (unmodified) Gram-Schmidt Orthogonalization with no iterative refinement
+                  happy breakdown tolerance 1e-30
+                maximum iterations=10, initial guess is zero
+                tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+                left preconditioning
+                using PRECONDITIONED norm type for convergence test
+              estimating eigenvalues using noisy right hand side
+            maximum iterations=2, nonzero initial guess
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_levels_2_) 192 MPI processes
+            type: sor
+              type = local_symmetric, iterations = 1, local iterations = 1, omega = 1.
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=9636, cols=9636, bs=3
+              total: nonzeros=621270, allocated nonzeros=621270
+              total number of mallocs used during MatSetValues calls=0
+                not using I-node (on process 0) routines
+        Up solver (post-smoother) same as down solver (pre-smoother)
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: mpiaij
+          rows=9636, cols=9636, bs=3
+          total: nonzeros=621270, allocated nonzeros=621270
+          total number of mallocs used during MatSetValues calls=0
+            not using I-node (on process 0) routines
+    Down solver (pre-smoother) on level 1 -------------------------------
+      KSP Object: (outer_mg_levels_1_) 192 MPI processes
+        type: chebyshev
+          eigenvalue estimates used:  min = 0.289195, max = 3.18114
+          eigenvalues estimate via cg min 0.0505231, max 2.89195
+          eigenvalues estimated using cg with translations  [0. 0.1; 0. 1.1]
+          KSP Object: (outer_mg_levels_1_esteig_) 192 MPI processes
+            type: cg
+            maximum iterations=10, initial guess is zero
+            tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using PRECONDITIONED norm type for convergence test
+          estimating eigenvalues using noisy right hand side
+        maximum iterations=3, nonzero initial guess
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (outer_mg_levels_1_) 192 MPI processes
+        type: jacobi
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: shell
+          rows=66750, cols=66750
+    Up solver (post-smoother) same as down solver (pre-smoother)
+    Down solver (pre-smoother) on level 2 -------------------------------
+      KSP Object: (outer_mg_levels_2_) 192 MPI processes
+        type: chebyshev
+          eigenvalue estimates used:  min = 0.354629, max = 3.90092
+          eigenvalues estimate via cg min 0.0664741, max 3.54629
+          eigenvalues estimated using cg with translations  [0. 0.1; 0. 1.1]
+          KSP Object: (outer_mg_levels_2_esteig_) 192 MPI processes
+            type: cg
+            maximum iterations=10, initial guess is zero
+            tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using PRECONDITIONED norm type for convergence test
+          estimating eigenvalues using noisy right hand side
+        maximum iterations=3, nonzero initial guess
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (outer_mg_levels_2_) 192 MPI processes
+        type: jacobi
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: shell
+          rows=491892, cols=491892
+    Up solver (post-smoother) same as down solver (pre-smoother)
+    linear system matrix = precond matrix:
+    Mat Object: 192 MPI processes
+      type: shell
+      rows=491892, cols=491892
+2 Load Increment
+  0 SNES Function norm 8.716362037255e+05 
+  1 SNES Function norm 1.290175680324e+01 
+  2 SNES Function norm 2.828093946388e-04 
+SNES Object: 192 MPI processes
+  type: newtonls
+  maximum iterations=50, maximum function evaluations=10000
+  tolerances: relative=1e-08, absolute=1e-50, solution=1e-08
+  total number of linear solver iterations=76
+  total number of function evaluations=5
+  norm schedule ALWAYS
+  SNESLineSearch Object: 192 MPI processes
+    type: cp
+    maxstep=1.000000e+08, minlambda=1.000000e-12
+    tolerances: relative=1.000000e-08, absolute=1.000000e-15, lambda=1.000000e-08
+    maximum iterations=1
+  KSP Object: (outer_) 192 MPI processes
+    type: cg
+    maximum iterations=10000, initial guess is zero
+    tolerances:  relative=1e-10, absolute=1e-50, divergence=10000.
+    left preconditioning
+    using NATURAL norm type for convergence test
+  PC Object: (outer_) 192 MPI processes
+    type: mg
+      type is MULTIPLICATIVE, levels=3 cycles=v
+        Cycles per PCApply=1
+        Not using Galerkin computed coarse grid matrices
+    Coarse grid solver -- level -------------------------------
+      KSP Object: (coarse_) 192 MPI processes
+        type: preonly
+        maximum iterations=10000, initial guess is zero
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (coarse_) 192 MPI processes
+        type: gamg
+          type is MULTIPLICATIVE, levels=3 cycles=v
+            Cycles per PCApply=1
+            Using externally compute Galerkin coarse grid matrices
+            GAMG specific options
+              Threshold for dropping small values in graph on each level =         0.        
+              Threshold scaling factor for each level not specified = 1.
+              AGG specific options
+                Symmetric graph false
+                Number of levels to square graph 1
+                Number smoothing steps 1
+              Complexity:    grid = 1.02563
+        Coarse grid solver -- level -------------------------------
+          KSP Object: (coarse_mg_coarse_) 192 MPI processes
+            type: preonly
+            maximum iterations=10000, initial guess is zero
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_coarse_) 192 MPI processes
+            type: bjacobi
+              number of blocks = 192
+              Local solver is the same for all blocks, as in the following KSP and PC objects on rank 0:
+            KSP Object: (coarse_mg_coarse_sub_) 1 MPI processes
+              type: preonly
+              maximum iterations=1, initial guess is zero
+              tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+              left preconditioning
+              using NONE norm type for convergence test
+            PC Object: (coarse_mg_coarse_sub_) 1 MPI processes
+              type: lu
+                out-of-place factorization
+                tolerance for zero pivot 2.22045e-14
+                using diagonal shift on blocks to prevent zero pivot [INBLOCKS]
+                matrix ordering: nd
+                factor fill ratio given 5., needed 1.13208
+                  Factored matrix follows:
+                    Mat Object: 1 MPI processes
+                      type: seqaij
+                      rows=36, cols=36, bs=3
+                      package used to perform factorization: petsc
+                      total: nonzeros=1080, allocated nonzeros=1080
+                      total number of mallocs used during MatSetValues calls=0
+                        using I-node routines: found 9 nodes, limit used is 5
+              linear system matrix = precond matrix:
+              Mat Object: 1 MPI processes
+                type: seqaij
+                rows=36, cols=36, bs=3
+                total: nonzeros=954, allocated nonzeros=954
+                total number of mallocs used during MatSetValues calls=0
+                  using I-node routines: found 12 nodes, limit used is 5
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=36, cols=36, bs=3
+              total: nonzeros=954, allocated nonzeros=954
+              total number of mallocs used during MatSetValues calls=0
+                using I-node (on process 0) routines: found 12 nodes, limit used is 5
+        Down solver (pre-smoother) on level 1 -------------------------------
+          KSP Object: (coarse_mg_levels_1_) 192 MPI processes
+            type: chebyshev
+              eigenvalue estimates used:  min = 0.160393, max = 1.76432
+              eigenvalues estimate via gmres min 0.0380387, max 1.60393
+              eigenvalues estimated using gmres with translations  [0. 0.1; 0. 1.1]
+              KSP Object: (coarse_mg_levels_1_esteig_) 192 MPI processes
+                type: gmres
+                  restart=30, using Classical (unmodified) Gram-Schmidt Orthogonalization with no iterative refinement
+                  happy breakdown tolerance 1e-30
+                maximum iterations=10, initial guess is zero
+                tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+                left preconditioning
+                using PRECONDITIONED norm type for convergence test
+              estimating eigenvalues using noisy right hand side
+            maximum iterations=2, nonzero initial guess
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_levels_1_) 192 MPI processes
+            type: sor
+              type = local_symmetric, iterations = 1, local iterations = 1, omega = 1.
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=291, cols=291, bs=3
+              total: nonzeros=14967, allocated nonzeros=14967
+              total number of mallocs used during MatSetValues calls=0
+                using I-node (on process 0) routines: found 6 nodes, limit used is 5
+        Up solver (post-smoother) same as down solver (pre-smoother)
+        Down solver (pre-smoother) on level 2 -------------------------------
+          KSP Object: (coarse_mg_levels_2_) 192 MPI processes
+            type: chebyshev
+              eigenvalue estimates used:  min = 0.217572, max = 2.39329
+              eigenvalues estimate via gmres min 0.027196, max 2.17572
+              eigenvalues estimated using gmres with translations  [0. 0.1; 0. 1.1]
+              KSP Object: (coarse_mg_levels_2_esteig_) 192 MPI processes
+                type: gmres
+                  restart=30, using Classical (unmodified) Gram-Schmidt Orthogonalization with no iterative refinement
+                  happy breakdown tolerance 1e-30
+                maximum iterations=10, initial guess is zero
+                tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+                left preconditioning
+                using PRECONDITIONED norm type for convergence test
+              estimating eigenvalues using noisy right hand side
+            maximum iterations=2, nonzero initial guess
+            tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using NONE norm type for convergence test
+          PC Object: (coarse_mg_levels_2_) 192 MPI processes
+            type: sor
+              type = local_symmetric, iterations = 1, local iterations = 1, omega = 1.
+            linear system matrix = precond matrix:
+            Mat Object: 192 MPI processes
+              type: mpiaij
+              rows=9636, cols=9636, bs=3
+              total: nonzeros=621270, allocated nonzeros=621270
+              total number of mallocs used during MatSetValues calls=0
+                not using I-node (on process 0) routines
+        Up solver (post-smoother) same as down solver (pre-smoother)
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: mpiaij
+          rows=9636, cols=9636, bs=3
+          total: nonzeros=621270, allocated nonzeros=621270
+          total number of mallocs used during MatSetValues calls=0
+            not using I-node (on process 0) routines
+    Down solver (pre-smoother) on level 1 -------------------------------
+      KSP Object: (outer_mg_levels_1_) 192 MPI processes
+        type: chebyshev
+          eigenvalue estimates used:  min = 0.289232, max = 3.18156
+          eigenvalues estimate via cg min 0.0505304, max 2.89232
+          eigenvalues estimated using cg with translations  [0. 0.1; 0. 1.1]
+          KSP Object: (outer_mg_levels_1_esteig_) 192 MPI processes
+            type: cg
+            maximum iterations=10, initial guess is zero
+            tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using PRECONDITIONED norm type for convergence test
+          estimating eigenvalues using noisy right hand side
+        maximum iterations=3, nonzero initial guess
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (outer_mg_levels_1_) 192 MPI processes
+        type: jacobi
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: shell
+          rows=66750, cols=66750
+    Up solver (post-smoother) same as down solver (pre-smoother)
+    Down solver (pre-smoother) on level 2 -------------------------------
+      KSP Object: (outer_mg_levels_2_) 192 MPI processes
+        type: chebyshev
+          eigenvalue estimates used:  min = 0.354617, max = 3.90079
+          eigenvalues estimate via cg min 0.0664738, max 3.54617
+          eigenvalues estimated using cg with translations  [0. 0.1; 0. 1.1]
+          KSP Object: (outer_mg_levels_2_esteig_) 192 MPI processes
+            type: cg
+            maximum iterations=10, initial guess is zero
+            tolerances:  relative=1e-12, absolute=1e-50, divergence=10000.
+            left preconditioning
+            using PRECONDITIONED norm type for convergence test
+          estimating eigenvalues using noisy right hand side
+        maximum iterations=3, nonzero initial guess
+        tolerances:  relative=1e-05, absolute=1e-50, divergence=10000.
+        left preconditioning
+        using NONE norm type for convergence test
+      PC Object: (outer_mg_levels_2_) 192 MPI processes
+        type: jacobi
+        linear system matrix = precond matrix:
+        Mat Object: 192 MPI processes
+          type: shell
+          rows=491892, cols=491892
+    Up solver (post-smoother) same as down solver (pre-smoother)
+    linear system matrix = precond matrix:
+    Mat Object: 192 MPI processes
+      type: shell
+      rows=491892, cols=491892
+  SNES:
+    SNES Type                          : newtonls
+    SNES Convergence                   : CONVERGED_FNORM_RELATIVE
+    Number of Load Increments          : 3
+    Completed Load Increments          : 3
+    Total SNES Iterations              : 6
+    Final rnorm                        : 2.828094e-04
+  Linear Solver:
+    KSP Type                           : cg
+    PC Type                            : mg
+  P-Multigrid:
+    PCMG Type                          : MULTIPLICATIVE
+    PCMG Cycle Type                    : v
+    Coarse Solve:
+      KSP Type                         : preonly
+      PC Type                          : gamg
+  Performance:
+    SNES Solve Time                    : 2.11856 (2.11784) sec
+    Strain Energy                      : -1.358802e+07
+************************************************************************************************************************
+***             WIDEN YOUR WINDOW TO 120 CHARACTERS.  Use 'enscript -r -fCourier9' to print this document            ***
+************************************************************************************************************************
+
+---------------------------------------------- PETSc Performance Summary: ----------------------------------------------
+
+./elasticity on a ompi-gcc8-O3 named shas0102.rc.int.colorado.edu with 192 processors, by arme5062 Thu Nov 19 16:45:03 2020
+Using Petsc Development GIT revision: v3.13.1-148-g80ec162  GIT Date: 2020-05-08 19:48:40 +0000
+
+                         Max       Max/Min     Avg       Total 
+Time (sec):           2.775e+00     1.005   2.773e+00
+Objects:              7.662e+03     1.089   7.128e+03
+Flop:                 1.066e+09     1.107   9.955e+08  1.911e+11
+Flop/sec:             3.846e+08     1.108   3.590e+08  6.894e+10
+MPI Messages:         1.407e+05     6.147   7.899e+04  1.517e+07
+MPI Message Lengths:  8.498e+07     4.113   6.287e+02  9.535e+09
+MPI Reductions:       4.162e+03     1.000
+
+Flop counting convention: 1 flop = 1 real number operation of type (multiply/divide/add/subtract)
+                            e.g., VecAXPY() for real vectors of length N --> 2N flop
+                            and VecAXPY() for complex vectors of length N --> 8N flop
+
+Summary of Stages:   ----- Time ------  ----- Flop ------  --- Messages ---  -- Message Lengths --  -- Reductions --
+                        Avg     %Total     Avg     %Total    Count   %Total     Avg         %Total    Count   %Total 
+ 0:      Main Stage: 1.5544e-02   0.6%  4.5604e+07   0.0%  2.031e+03   0.0%  8.719e+02        0.0%  5.000e+00   0.1% 
+ 1: DM and Vector Setup Stage: 6.0899e-01  22.0%  1.8073e+11  94.6%  7.560e+04   0.5%  1.216e+02        0.1%  2.050e+02   4.9% 
+ 2: libCEED Setup Stage: 4.9352e-03   0.2%  0.0000e+00   0.0%  0.000e+00   0.0%  0.000e+00        0.0%  0.000e+00   0.0% 
+ 3: SNES Setup Stage: 2.4482e-02   0.9%  2.8484e+05   0.0%  3.671e+04   0.2%  8.399e+02        0.3%  3.700e+01   0.9% 
+ 4: SNES Solve Stage: 2.1188e+00  76.4%  1.0364e+10   5.4%  1.505e+07  99.2%  6.307e+02       99.6%  3.908e+03  93.9% 
+
+------------------------------------------------------------------------------------------------------------------------
+See the 'Profiling' chapter of the users' manual for details on interpreting output.
+Phase summary info:
+   Count: number of times phase was executed
+   Time and Flop: Max - maximum over all processors
+                  Ratio - ratio of maximum to minimum over all processors
+   Mess: number of messages sent
+   AvgLen: average message length (bytes)
+   Reduct: number of global reductions
+   Global: entire computation
+   Stage: stages of a computation. Set stages with PetscLogStagePush() and PetscLogStagePop().
+      %T - percent time in this phase         %F - percent flop in this phase
+      %M - percent messages in this phase     %L - percent message lengths in this phase
+      %R - percent reductions in this phase
+   Total Mflop/s: 10e-6 * (sum of flop over all processors)/(max time over all processors)
+------------------------------------------------------------------------------------------------------------------------
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total
+                   Max Ratio  Max     Ratio   Max  Ratio  Mess   AvgLen  Reduct  %T %F %M %L %R  %T %F %M %L %R Mflop/s
+------------------------------------------------------------------------------------------------------------------------
+
+--- Event Stage 0: Main Stage
+
+MatMult               10 0.0 8.7570e-06 0.0 3.75e+03 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0  4454
+SFBcastOpBegin         1 1.0 5.8468e-0518.8 0.00e+00 0.0 1.3e+03 1.4e+03 0.0e+00  0  0  0  0  0   0  0 62100  0     0
+SFBcastOpEnd           1 1.0 7.7615e-0539.1 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFPack                 1 1.0 1.6610e-05291.4 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFUnpack               1 1.0 1.0641e-05166.3 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+VecSet                 3 1.0 2.8773e-05 8.8 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+
+--- Event Stage 1: DM and Vector Setup Stage
+
+BuildTwoSided         20 1.0 5.6400e-02 2.1 0.00e+00 0.0 1.6e+04 4.0e+00 2.0e+01  2  0  0  0  0   7  0 21  1 10     0
+MatAssemblyBegin      98 1.0 2.6240e-05 3.0 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+MatAssemblyEnd        98 1.0 2.4417e-04 2.1 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+DMPlexCrFromFile       1 1.0 5.6744e-02 1.7 0.00e+00 0.0 0.0e+00 0.0e+00 5.0e+00  2  0  0  0  0   8  0  0  0  2     0
+Mesh Partition         1 1.0 3.0050e-01 1.0 0.00e+00 0.0 9.6e+02 9.2e+02 1.1e+01 11  0  0  0  0  49  0  1 10  5     0
+Mesh Migration         1 1.0 3.0039e-02 1.0 0.00e+00 0.0 6.5e+03 6.3e+02 3.6e+01  1  0  0  0  1   5  0  9 44 18     0
+DMPlexPartSelf         1 1.0 6.9993e-031096.2 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+DMPlexPartLblInv       1 1.0 1.8984e-01 1.2 0.00e+00 0.0 0.0e+00 0.0e+00 3.0e+00  6  0  0  0  0  28  0  0  2  1     0
+DMPlexPartLblSF        1 1.0 2.5595e-0280.9 0.00e+00 0.0 3.8e+02 4.6e+02 1.0e+00  1  0  0  0  0   3  0  1  2  0     0
+DMPlexPartStrtSF       1 1.0 2.1410e-03 1.8 0.00e+00 0.0 1.9e+02 1.8e+03 0.0e+00  0  0  0  0  0   0  0  0  4  0     0
+DMPlexPointSF          1 1.0 3.0484e-03 1.1 0.00e+00 0.0 3.8e+02 2.3e+03 0.0e+00  0  0  0  0  0   0  0  1 10  0     0
+DMPlexInterp          40 1.0 4.1387e-02 1.2 0.00e+00 0.0 0.0e+00 0.0e+00 2.3e+01  1  0  0  0  1   6  0  0  0 11     0
+DMPlexDistribute       1 1.0 3.3351e-01 1.0 0.00e+00 0.0 7.8e+03 7.5e+02 4.7e+01 12  0  0  0  1  55  0 10 64 23     0
+DMPlexDistCones        1 1.0 6.9069e-03 1.7 0.00e+00 0.0 1.1e+03 1.4e+03 2.0e+00  0  0  0  0  0   1  0  2 17  1     0
+DMPlexDistLabels       1 1.0 1.9926e-02 1.0 0.00e+00 0.0 3.8e+03 4.7e+02 3.1e+01  1  0  0  0  1   3  0  5 20 15     0
+DMPlexDistField        1 1.0 2.9605e-03 1.2 0.00e+00 0.0 1.3e+03 4.0e+02 2.0e+00  0  0  0  0  0   0  0  2  6  1     0
+DMPlexStratify        55 1.0 3.5724e-02 4.9 0.00e+00 0.0 0.0e+00 0.0e+00 5.5e+01  1  0  0  0  1   5  0  0  0 27     0
+DMPlexSymmetrize      55 1.0 1.8761e-0333.8 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFSetGraph            21 1.0 1.7034e-05 3.4 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFSetUp               20 1.0 5.8672e-02 2.0 0.00e+00 0.0 3.1e+04 5.7e+01 2.0e+01  2  0  0  0  0   8  0 41 20 10     0
+SFBcastOpBegin        49 1.0 3.5655e-0320.9 0.00e+00 0.0 3.5e+04 1.7e+02 0.0e+00  0  0  0  0  0   0  0 47 63  0     0
+SFBcastOpEnd          49 1.0 2.8548e-02 1.9 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  1  0  0  0  0   3  0  0  0  0     0
+SFReduceBegin          6 1.0 4.4889e-04 9.5 0.00e+00 0.0 6.5e+03 1.9e+02 0.0e+00  0  0  0  0  0   0  0  9 13  0     0
+SFReduceEnd            6 1.0 3.5488e-02283.8 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   2  0  0  0  0     0
+SFFetchOpBegin         1 1.0 2.5063e-0518.0 0.00e+00 0.0 1.3e+03 6.8e+01 0.0e+00  0  0  0  0  0   0  0  2  1  0     0
+SFFetchOpEnd           1 1.0 1.4119e-04 3.7 0.00e+00 0.0 1.3e+03 6.8e+01 0.0e+00  0  0  0  0  0   0  0  2  1  0     0
+SFCreateEmbed          1 1.0 1.9663e-04 2.6 0.00e+00 0.0 1.9e+02 2.3e+02 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFDistSection         12 1.0 4.9337e-02 4.3 0.00e+00 0.0 2.5e+04 1.3e+02 1.5e+01  1  0  0  0  0   6  0 34 35  7     0
+SFSectionSF           12 1.0 1.1860e-02 1.9 0.00e+00 0.0 1.5e+04 5.8e+01 1.2e+01  0  0  0  0  0   2  0 20 10  6     0
+SFPack                56 1.0 1.3901e-03168.8 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFUnpack              57 1.0 1.7862e-03191.2 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+VecSet                55 1.0 1.3175e-04 2.4 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+
+--- Event Stage 2: libCEED Setup Stage
+
+VecSet                 4 1.0 4.1378e-0519.9 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+
+--- Event Stage 3: SNES Setup Stage
+
+BuildTwoSided          8 1.0 7.4193e-03 3.2 0.00e+00 0.0 9.3e+03 4.0e+00 8.0e+00  0  0  0  0  0  21  0 25  0 22     0
+BuildTwoSidedF         1 1.0 6.4235e-0420.4 0.00e+00 0.0 0.0e+00 0.0e+00 1.0e+00  0  0  0  0  0   1  0  0  0  3     0
+MatAssemblyBegin       1 1.0 6.7918e-0410.7 0.00e+00 0.0 0.0e+00 0.0e+00 1.0e+00  0  0  0  0  0   2  0  0  0  3     0
+MatAssemblyEnd         1 1.0 3.4063e-03 1.3 0.00e+00 0.0 4.2e+03 3.6e+01 5.0e+00  0  0  0  0  0  11  0 11  0 14     0
+DMCreateMat            1 1.0 1.5678e-02 1.1 0.00e+00 0.0 2.7e+04 9.5e+02 1.9e+01  1  0  0  0  0  61  0 72 81 51     0
+DMPlexPrealloc         1 1.0 1.5499e-02 1.1 0.00e+00 0.0 2.7e+04 9.5e+02 1.7e+01  1  0  0  0  0  61  0 72 81 46     0
+SFSetGraph             9 1.0 4.7290e-06 1.9 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFSetUp                7 1.0 7.7449e-03 2.9 0.00e+00 0.0 1.9e+04 5.2e+02 7.0e+00  0  0  0  0  0  23  0 51 31 19     0
+SFBcastOpBegin         7 1.0 3.2723e-0410.4 0.00e+00 0.0 8.6e+03 6.1e+02 0.0e+00  0  0  0  0  0   1  0 23 17  0     0
+SFBcastOpEnd           7 1.0 4.0638e-03299.1 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   7  0  0  0  0     0
+SFReduceBegin          6 1.0 2.7899e-04 6.6 0.00e+00 0.0 7.2e+03 1.5e+03 0.0e+00  0  0  0  0  0   1  0 20 34  0     0
+SFReduceEnd            6 1.0 4.3011e-03158.9 4.68e+03 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   5100  0  0  0    66
+SFFetchOpBegin         1 1.0 3.4686e-0516.4 0.00e+00 0.0 1.2e+03 2.3e+03 0.0e+00  0  0  0  0  0   0  0  3  9  0     0
+SFFetchOpEnd           1 1.0 1.1303e-0327.9 0.00e+00 0.0 1.2e+03 2.3e+03 0.0e+00  0  0  0  0  0   2  0  3  9  0     0
+SFCreateEmbed          2 1.0 3.0869e-0367.5 0.00e+00 0.0 2.4e+03 1.7e+01 0.0e+00  0  0  0  0  0   3  0  7  0  0     0
+SFSectionSF            2 1.0 4.3383e-03 3.0 0.00e+00 0.0 4.7e+03 6.0e+02 2.0e+00  0  0  0  0  0  12  0 13  9  5     0
+SFRemoteOff            2 1.0 3.2282e-0326.9 0.00e+00 0.0 4.9e+03 4.3e+01 0.0e+00  0  0  0  0  0   6  0 13  1  0     0
+SFPack                14 1.0 5.7385e-05 7.4 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFUnpack              15 1.0 1.8251e-0413.4 4.68e+03 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0100  0  0  0  1561
+VecSet                14 1.0 1.2303e-04 5.8 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+
+--- Event Stage 4: SNES Solve Stage
+
+PetscBarrier           2 1.0 8.7735e-03 1.9 0.00e+00 0.0 0.0e+00 0.0e+00 2.0e+00  0  0  0  0  0   0  0  0  0  0     0
+BuildTwoSided        367 1.0 1.3463e-01 1.6 0.00e+00 0.0 1.1e+05 4.0e+00 3.7e+02  4  0  1  0  9   6  0  1  0  9     0
+BuildTwoSidedF       252 1.0 1.2547e-01 1.7 0.00e+00 0.0 4.3e+04 1.2e+03 2.5e+02  4  0  0  1  6   5  0  0  1  6     0
+MatMult             5817 1.0 1.0198e+00 1.2 3.59e+0734.4 1.1e+07 7.4e+02 0.0e+00 33  1 74 88  0  43 20 75 88  0  2003
+MatMultAdd           924 1.0 2.7100e-01 3.1 4.98e+06 2.8 1.2e+06 5.6e+02 0.0e+00  6  0  8  7  0   8  5  8  7  0  2073
+MatMultTranspose     932 1.0 1.7411e-01 2.6 2.17e+06 2.3 1.3e+06 5.6e+02 0.0e+00  3  0  8  7  0   4  3  8  7  0  1516
+MatSolve             231 0.0 6.5954e-04 0.0 4.91e+05 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0   744
+MatSOR              1980 1.0 1.4207e-0247.8 1.60e+07 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  5  0  0  0 39984
+MatLUFactorSym         6 1.0 2.2638e-04 6.3 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+MatLUFactorNum         6 1.0 1.1329e-0417.6 1.21e+05 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0  1071
+MatScale              36 1.0 1.2045e-0313.5 3.24e+04 0.0 1.3e+04 4.6e+01 0.0e+00  0  0  0  0  0   0  0  0  0  0  1592
+MatResidual          924 1.0 1.5435e-01 1.6 8.01e+0620.6 1.7e+06 6.7e+02 0.0e+00  5  0 11 12  0   6  5 11 12  0  3167
+MatAssemblyBegin     331 1.0 1.0806e-01 1.9 0.00e+00 0.0 4.3e+04 1.2e+03 1.1e+02  3  0  0  1  3   4  0  0  1  3     0
+MatAssemblyEnd       331 1.0 9.2421e-02 1.2 4.77e+04 0.0 1.3e+05 1.5e+01 4.5e+02  3  0  1  0 11   4  0  1  0 12    27
+MatGetRowIJ            7 7.0 9.3898e-04 2.1 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+MatCreateSubMat       24 1.0 4.7826e-02 1.0 0.00e+00 0.0 7.1e+03 1.8e+02 3.4e+02  2  0  0  0  8   2  0  0  0  9     0
+MatGetOrdering         6 0.0 2.0408e-04 0.0 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+MatCoarsen            12 1.0 1.5263e-02 1.1 0.00e+00 0.0 2.8e+05 3.2e+01 8.4e+01  1  0  2  0  2   1  0  2  0  2     0
+MatZeroEntries        18 1.0 1.0859e-0411.9 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+MatView               27 1.3 9.6893e-03 2.6 0.00e+00 0.0 0.0e+00 0.0e+00 1.2e+01  0  0  0  0  0   0  0  0  0  0     0
+MatAXPY               12 1.0 2.2176e-03 2.6 3.46e+03 0.0 0.0e+00 0.0e+00 1.2e+01  0  0  0  0  0   0  0  0  0  0    81
+MatFDColorCreate       1 1.0 8.1838e-04 1.1 0.00e+00 0.0 0.0e+00 0.0e+00 2.0e+00  0  0  0  0  0   0  0  0  0  0     0
+MatFDColorSetUp        1 1.0 6.6140e-02 1.0 0.00e+00 0.0 0.0e+00 0.0e+00 4.2e+02  2  0  0  0 10   3  0  0  0 11     0
+MatFDColorApply        6 1.0 1.1334e-01 1.0 5.63e+05 0.0 1.5e+06 1.4e+02 9.0e+00  4  0 10  2  0   5  0 10  2  0   221
+MatFDColorFunc       630 1.0 1.1235e-01 1.0 3.21e+05 0.0 1.5e+06 1.4e+02 3.0e+00  4  0 10  2  0   5  0 10  2  0   115
+MatTranspose          24 1.0 1.4592e-03 5.1 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+MatMatMultSym         36 1.0 2.6986e-02 1.1 0.00e+00 0.0 5.0e+04 1.7e+02 1.2e+02  1  0  0  0  3   1  0  0  0  3     0
+MatMatMultNum         12 1.0 7.3398e-03 4.9 4.54e+05 0.0 1.3e+04 4.1e+02 1.2e+01  0  0  0  0  0   0  0  0  0  0  3121
+MatPtAPSymbolic       12 1.0 2.7667e-02 1.1 0.00e+00 0.0 5.7e+04 4.9e+02 8.4e+01  1  0  0  0  2   1  0  0  0  2     0
+MatPtAPNumeric        12 1.0 1.4722e-02 1.2 1.66e+06 0.0 2.4e+04 3.6e+02 7.2e+01  0  0  0  0  2   1  1  0  0  2  6207
+MatTrnMatMultSym       6 1.0 1.8859e-02 1.1 0.00e+00 0.0 3.8e+04 2.8e+02 4.2e+01  1  0  0  0  1   1  0  0  0  1     0
+MatTrnMatMultNum       6 1.0 1.7833e-02 1.0 4.63e+05 0.0 6.8e+04 5.9e+02 3.6e+01  1  0  0  0  1   1  0  0  0  1  1344
+MatGetLocalMat        42 1.0 1.2086e-03 3.2 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+MatGetBrAoCol         36 1.0 1.0241e-0221.4 0.00e+00 0.0 8.9e+04 4.4e+02 0.0e+00  0  0  1  0  0   0  0  1  0  0     0
+MatColoringApply       1 1.0 2.4742e-02 1.0 0.00e+00 0.0 1.9e+02 4.0e+00 3.0e+00  1  0  0  0  0   1  0  0  0  0     0
+DMPlexInterp          13 1.0 4.6342e-03 1.1 0.00e+00 0.0 0.0e+00 0.0e+00 7.0e+00  0  0  0  0  0   0  0  0  0  0     0
+DMPlexStratify        17 1.0 3.0935e-03 2.1 0.00e+00 0.0 0.0e+00 0.0e+00 1.7e+01  0  0  0  0  0   0  0  0  0  0     0
+DMPlexSymmetrize      17 1.0 2.9999e-05 2.4 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFSetGraph           115 1.0 6.7480e-05 4.9 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFSetUp              115 1.0 1.6972e-02 1.8 0.00e+00 0.0 1.7e+05 1.6e+01 1.2e+02  1  0  1  0  3   1  0  1  0  3     0
+SFBcastOpBegin      7514 1.0 9.7380e-02 9.1 0.00e+00 0.0 8.7e+06 5.6e+02 0.0e+00  2  0 58 51  0   2  0 58 51  0     0
+SFBcastOpEnd        7514 1.0 7.7313e-01 3.9 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00 18  0  0  0  0  23  0  0  0  0     0
+SFReduceBegin       5168 1.0 6.2822e-02 4.4 0.00e+00 0.0 6.0e+06 7.6e+02 0.0e+00  1  0 39 48  0   2  0 40 48  0     0
+SFReduceEnd         5168 1.0 6.4746e-0124.5 9.44e+06 0.0 0.0e+00 0.0e+00 0.0e+00 13  0  0  0  0  17  5  0  0  0   875
+SFPack             12682 1.0 1.1645e-02 2.8 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SFUnpack           12682 1.0 1.4291e-02 3.7 9.44e+06 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  5  0  0  0 39620
+VecDot                12 1.0 7.0405e-03 7.7 9.63e+04 3.1 0.0e+00 0.0e+00 1.2e+01  0  0  0  0  0   0  0  0  0  0  1676
+VecMDot              240 1.0 2.9006e-02 2.2 2.53e+05 0.0 0.0e+00 0.0e+00 2.4e+02  1  0  0  0  6   1  0  0  0  6   447
+VecTDot              708 1.0 2.4386e-01 1.9 4.86e+06 3.2 0.0e+00 0.0e+00 7.1e+02  6  0  0  0 17   8  6  0  0 18  2416
+VecNorm              399 1.0 4.9812e-02 1.2 7.04e+05 3.6 0.0e+00 0.0e+00 4.0e+02  2  0  0  0 10   2  1  0  0 10  1592
+VecScale            4325 1.0 4.3488e-04 1.5 2.53e+04 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0  3013
+VecCopy             2562 1.0 2.9506e-03 4.3 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+VecSet             17309 1.0 2.9341e-02 3.2 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   1  0  0  0  0     0
+VecAXPY             1833 1.0 6.3944e-03 5.6 7.42e+06 3.4 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  8  0  0  0 136652
+VecAYPX             6795 1.0 9.7140e-03 4.4 1.37e+07 3.5 0.0e+00 0.0e+00 0.0e+00  0  1  0  0  0   0 15  0  0  0 163125
+VecAXPBYCZ          2772 1.0 4.3346e-03 3.3 2.25e+07 3.5 0.0e+00 0.0e+00 0.0e+00  0  1  0  0  0   0 25  0  0  0 600715
+VecMAXPY             264 1.0 1.3698e-04 2.7 3.00e+05 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0 113052
+VecAssemblyBegin     156 1.0 2.0653e-02 1.5 0.00e+00 0.0 0.0e+00 0.0e+00 1.4e+02  1  0  0  0  3   1  0  0  0  4     0
+VecAssemblyEnd       156 1.0 1.9076e-04 2.4 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+VecPointwiseMult    3974 1.0 1.5748e-02 4.8 9.20e+06 2.2 0.0e+00 0.0e+00 0.0e+00  0  1  0  0  0   0 12  0  0  0 76900
+VecScatterBegin     3186 1.0 3.1509e-0219.1 0.00e+00 0.0 2.7e+06 1.2e+02 0.0e+00  0  0 18  4  0   1  0 18  4  0     0
+VecScatterEnd       3186 1.0 2.0004e-01168.0 2.08e+05 0.0 0.0e+00 0.0e+00 0.0e+00  6  0  0  0  0   8  0  0  0  0     4
+VecSetRandom          12 1.0 4.3316e-0514.6 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+VecReduceArith        18 1.0 7.0811e-05 7.3 1.44e+05 3.1 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0 250027
+VecReduceComm          6 1.0 6.2784e-0320.7 0.00e+00 0.0 0.0e+00 0.0e+00 6.0e+00  0  0  0  0  0   0  0  0  0  0     0
+VecNormalize         264 1.0 2.5520e-02 1.4 7.60e+04 0.0 0.0e+00 0.0e+00 2.6e+02  1  0  0  0  6   1  0  0  0  7   154
+SNESSolve              3 1.0 2.0975e+00 1.0 1.23e+08 5.6 1.5e+07 6.3e+02 3.9e+03 76  5 99100 93  99100100100 99  4941
+SNESSetUp              1 1.0 2.7844e-05 4.5 0.00e+00 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0     0
+SNESFunctionEval     645 1.0 1.4511e-01 1.1 2.69e+0754669.2 1.5e+06 1.7e+02 3.8e+01  5  0 10  3  1   6  7 10  3  1  4827
+SNESJacobianEval       6 1.0 2.0497e-01 1.0 5.63e+05 0.0 1.5e+06 1.4e+02 4.3e+02  7  0 10  2 10  10  0 10  2 11   122
+SNESLineSearch         6 1.0 1.7258e-02 1.1 2.17e+07155.2 3.0e+04 1.4e+03 1.8e+01  1  0  0  0  0   1  6  0  0  0 34941
+KSPSetUp              74 1.0 5.5978e-03 1.4 0.00e+00 0.0 0.0e+00 0.0e+00 2.8e+01  0  0  0  0  1   0  0  0  0  1     0
+KSPSolve               6 1.0 1.8523e+00 1.0 1.12e+08 5.2 1.4e+07 6.8e+02 3.4e+03 67  5 89 97 82  87 93 90 97 87  5179
+KSPGMRESOrthog       240 1.0 2.9167e-02 2.2 5.06e+05 0.0 0.0e+00 0.0e+00 2.4e+02  1  0  0  0  6   1  0  0  0  6   894
+PCGAMGGraph_AGG       12 1.0 4.3887e-02 1.0 8.41e+04 0.0 6.4e+04 2.0e+01 2.3e+02  2  0  0  0  5   2  0  0  0  6    97
+PCGAMGCoarse_AGG      12 1.0 6.1227e-02 1.0 4.63e+05 0.0 4.8e+05 1.4e+02 2.1e+02  2  0  3  1  5   3  0  3  1  5   391
+PCGAMGProl_AGG        12 1.0 1.5084e-01 1.0 0.00e+00 0.0 2.3e+05 7.3e+01 4.8e+02  5  0  1  0 12   7  0  1  0 12     0
+PCGAMGPOpt_AGG        12 1.0 8.3753e-02 1.0 2.30e+06 0.0 1.9e+05 1.7e+02 4.9e+02  3  0  1  0 12   4  1  1  0 13  1395
+GAMG: createProl      12 1.0 3.3615e-01 1.0 2.85e+06 0.0 9.6e+05 1.2e+02 1.4e+03 12  0  6  1 34  16  1  6  1 36   432
+  Graph               24 1.0 4.3382e-02 1.0 8.41e+04 0.0 6.4e+04 2.0e+01 2.3e+02  2  0  0  0  5   2  0  0  0  6    98
+  MIS/Agg             12 1.0 1.5358e-02 1.1 0.00e+00 0.0 2.8e+05 3.2e+01 8.4e+01  1  0  2  0  2   1  0  2  0  2     0
+  SA: col data        12 1.0 4.8371e-02 1.0 0.00e+00 0.0 2.1e+05 6.9e+01 3.6e+02  2  0  1  0  9   2  0  1  0  9     0
+  SA: frmProl0        12 1.0 9.7818e-02 1.0 0.00e+00 0.0 1.1e+04 1.6e+02 7.2e+01  3  0  0  0  2   5  0  0  0  2     0
+  SA: smooth          12 1.0 3.8711e-02 1.1 4.73e+05 0.0 6.3e+04 2.2e+02 1.7e+02  1  0  0  0  4   2  0  0  0  4   624
+GAMG: partLevel       12 1.0 1.2202e-01 1.0 1.66e+06 0.0 9.1e+04 4.2e+02 7.9e+02  4  0  1  0 19   6  1  1  0 20   749
+  repartition         12 1.0 8.1616e-02 1.0 0.00e+00 0.0 9.8e+03 1.4e+02 6.4e+02  3  0  0  0 15   4  0  0  0 16     0
+  Invert-Sort         12 1.0 8.3227e-03 1.1 0.00e+00 0.0 0.0e+00 0.0e+00 7.2e+01  0  0  0  0  2   0  0  0  0  2     0
+  Move A              12 1.0 2.6844e-02 1.0 0.00e+00 0.0 2.5e+03 4.7e+02 1.8e+02  1  0  0  0  4   1  0  0  0  5     0
+  Move P              12 1.0 2.6313e-02 1.0 0.00e+00 0.0 4.6e+03 2.2e+01 1.9e+02  1  0  0  0  5   1  0  0  0  5     0
+PCSetUp               12 1.0 5.2386e-01 1.0 4.30e+06168.2 1.1e+06 1.7e+02 2.3e+03 19  0  7  2 55  25  2  7  2 59   466
+PCSetUpOnBlocks      231 1.0 7.9375e-04 2.9 1.21e+05 0.0 0.0e+00 0.0e+00 0.0e+00  0  0  0  0  0   0  0  0  0  0   153
+PCApply              231 1.0 1.1699e+00 1.1 9.82e+07 5.4 1.2e+07 6.9e+02 6.4e+02 41  4 78 87 15  54 79 79 87 16  7003
+------------------------------------------------------------------------------------------------------------------------
+
+Memory usage is given in bytes:
+
+Object Type          Creations   Destructions     Memory  Descendants' Mem.
+Reports information only for process 0.
+
+--- Event Stage 0: Main Stage
+
+           Container     0             25        14600     0.
+    Distributed Mesh     0             60       309040     0.
+            DM Label     0            128        81920     0.
+    GraphPartitioner     0             17        11696     0.
+          Quadrature     0            708       424800     0.
+              Matrix     0             52       261048     0.
+  Matrix FD Coloring     0              1         2036     0.
+           Index Set     8            250       230968     0.
+   IS L to G Mapping     0              1          940     0.
+             Section     0            122        89792     0.
+    Section Symmetry     0              1          696     0.
+   Star Forest Graph     0             87        87744     0.
+     Discrete System     0             49        45876     0.
+         Vec Scatter     0              5         4080     0.
+              Vector     0            126       646048     0.
+        Linear Space     0              4         2752     0.
+          Dual Space     0             16        14976     0.
+            FE Space     0              4         3120     0.
+                SNES     0              2         2820     0.
+              DMSNES     0              2         1360     0.
+      SNESLineSearch     0              1         1000     0.
+       Krylov Solver     0             13       366808     0.
+     DMKSP interface     0              1          664     0.
+      Preconditioner     0              9         9804     0.
+              Viewer     1              1          848     0.
+       Field over DM     0              1          712     0.
+
+--- Event Stage 1: DM and Vector Setup Stage
+
+           Container    51             32        18688     0.
+    Distributed Mesh   193            146       750048     0.
+            DM Label   411            305       195200     0.
+    GraphPartitioner    55             42        28896     0.
+          Quadrature  1010            353       211800     0.
+              Matrix   149            127       407628     0.
+           Index Set  1410           1311      1400872     0.
+   IS L to G Mapping     1              1        76312     0.
+             Section   387            292       214912     0.
+    Section Symmetry     1              0            0     0.
+   Star Forest Graph   406            342       341856     0.
+     Discrete System   247            209       195624     0.
+              Vector    61             31       129824     0.
+        Linear Space     3              0            0     0.
+          Dual Space    63             51        47736     0.
+            FE Space     3              0            0     0.
+
+--- Event Stage 2: libCEED Setup Stage
+
+              Vector     4              0            0     0.
+
+--- Event Stage 3: SNES Setup Stage
+
+              Matrix     8              0            0     0.
+           Index Set     4              4         3592     0.
+   IS L to G Mapping     1              0            0     0.
+             Section     4              4         2944     0.
+   Star Forest Graph     6              5         5680     0.
+         Vec Scatter     1              0            0     0.
+              Vector     7              1         1696     0.
+                SNES     2              0            0     0.
+              DMSNES     2              0            0     0.
+      SNESLineSearch     1              0            0     0.
+       Krylov Solver     8              1         1480     0.
+      Preconditioner     5              0            0     0.
+              Viewer     1              0            0     0.
+
+--- Event Stage 4: SNES Solve Stage
+
+           Container    16             10         5840     0.
+    Distributed Mesh    60             47       241120     0.
+            DM Label   112             90        57600     0.
+    GraphPartitioner    17             13         8944     0.
+          Quadrature    86             35        21000     0.
+              Matrix   473            451      9528844     0.
+  Matrix FD Coloring     1              0            0     0.
+     Matrix Coloring     1              1          656     0.
+      Matrix Coarsen    12             12         7728     0.
+           Index Set   813            670       651708     0.
+             Section   108             81        59616     0.
+   Star Forest Graph   234            212       226144     0.
+     Discrete System    76             65        60840     0.
+         Vec Scatter   102             98        79968     0.
+              Vector   955            869      1545544     0.
+        Linear Space     1              0            0     0.
+          Dual Space    17             13        12168     0.
+            FE Space     1              0            0     0.
+       Krylov Solver    18             12       365760     0.
+     DMKSP interface     1              0            0     0.
+      Preconditioner    16             12        10368     0.
+              Viewer     3              3         2544     0.
+       Field over DM     1              0            0     0.
+         PetscRandom    24             24        15696     0.
+========================================================================================================================
+Average time to get PetscTime(): 3.03e-08
+Average time for MPI_Barrier(): 1.91036e-05
+Average time for zero size MPI_Send(): 1.08602e-06
+#PETSc Option Table entries:
+-bc_clamp 998,999
+-bc_clamp_998_translate 0,-2,0
+-degree 4
+-E 1e6
+-log_view
+-mesh ./meshes/cyl-hole_1994e_4ss_us.exo
+-nu 0.3
+-num_steps 3
+-problem hyperSS
+-snes_monitor
+-snes_view
+#End of PETSc Option Table entries
+Compiled without FORTRAN kernels
+Compiled with full precision matrices (default)
+sizeof(short) 2 sizeof(int) 4 sizeof(long) 8 sizeof(void*) 8 sizeof(PetscScalar) 8 sizeof(PetscInt) 4
+Configure options: --download-exodusii --download-hdf5 --download-hypre --download-metis --download-ml --download-netcdf --download-parmetis --download-pnetcdf --download-zlib --with-blaslapack-dir=/curc/sw/intel/parallel_studio_xe_2018_update3_cluster_edition/mkl/lib/intel64 --with-debugging=0 --with-fortran-bindings=0 --with-mpi-dir=/curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0 COPTFLAGS="-Ofast -march=haswell -g" PETSC_ARCH=ompi-gcc8 --with-mpi-dir=/curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0 COPTFLAGS="-O3 -ffp-contract=fast -march=haswell" PETSC_ARCH=ompi-gcc8-O3
+-----------------------------------------
+Libraries compiled on 2020-05-10 21:57:18 on shas0137 
+Machine characteristics: Linux-3.10.0-957.21.3.el7.x86_64-x86_64-with-redhat-7.4-Maipo
+Using PETSc directory: /projects/jeka2967/petsc
+Using PETSc arch: ompi-gcc8-O3
+-----------------------------------------
+
+Using C compiler: /curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0/bin/mpicc  -fPIC -Wall -Wwrite-strings -Wno-strict-aliasing -Wno-unknown-pragmas -fstack-protector -fvisibility=hidden -O3 -ffp-contract=fast -march=haswell   
+Using Fortran compiler: /curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0/bin/mpif90  -fPIC -Wall -ffree-line-length-0 -Wno-unused-dummy-argument -g -O     
+-----------------------------------------
+
+Using include paths: -I/projects/jeka2967/petsc/include -I/projects/jeka2967/petsc/ompi-gcc8-O3/include -I/curc/sw/intel/parallel_studio_xe_2018_update3_cluster_edition/mkl/lib/intel64/../../include -I/curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0/include
+-----------------------------------------
+
+Using C linker: /curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0/bin/mpicc
+Using Fortran linker: /curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0/bin/mpif90
+Using libraries: -Wl,-rpath,/projects/jeka2967/petsc/ompi-gcc8-O3/lib -L/projects/jeka2967/petsc/ompi-gcc8-O3/lib -lpetsc -Wl,-rpath,/projects/jeka2967/petsc/ompi-gcc8-O3/lib -L/projects/jeka2967/petsc/ompi-gcc8-O3/lib -Wl,-rpath,/curc/sw/intel/parallel_studio_xe_2018_update3_cluster_edition/mkl/lib/intel64 -L/curc/sw/intel/parallel_studio_xe_2018_update3_cluster_edition/mkl/lib/intel64 -Wl,-rpath,/curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0/lib -L/curc/sw/openmpi_ucx/4.0.2/gcc/8.2.0/lib -Wl,-rpath,/curc/sw/gcc/8.2.0/lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/curc/sw/gcc/8.2.0/lib/gcc/x86_64-pc-linux-gnu/8.2.0 -Wl,-rpath,/curc/sw/gcc/8.2.0/lib64 -L/curc/sw/gcc/8.2.0/lib64 -Wl,-rpath,/curc/sw/gcc/8.2.0/lib -L/curc/sw/gcc/8.2.0/lib -lHYPRE -lml -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lX11 -lexodus -lnetcdf -lpnetcdf -lhdf5hl_fortran -lhdf5_fortran -lhdf5_hl -lhdf5 -lparmetis -lmetis -lm -lz -lstdc++ -ldl -lmpi_usempif08 -lmpi_usempi_ignore_tkr -lmpi_mpifh -lmpi -lgfortran -lm -lgfortran -lm -lgcc_s -lquadmath -lpthread -lquadmath -lstdc++ -ldl
+-----------------------------------------
+
