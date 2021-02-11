@@ -1,0 +1,48 @@
+    Total KSP Iterations               : 334
+    SNES Solve Time                    : 0.215607 (0.215607) sec
+    DoFs/Sec in SNES                   : 1.59404 (1.59404) million
+    L2 Error                           : 1.309236e-01
+    Total KSP Iterations               : 516
+    SNES Solve Time                    : 0.624799 (0.624799) sec
+    DoFs/Sec in SNES                   : 1.80617 (1.80617) million
+    L2 Error                           : 7.715061e-02
+    Total KSP Iterations               : 670
+    SNES Solve Time                    : 1.36562 (1.36562) sec
+    DoFs/Sec in SNES                   : 1.95904 (1.95904) million
+    L2 Error                           : 5.121005e-02
+    Total KSP Iterations               : 779
+    SNES Solve Time                    : 2.55725 (2.55725) sec
+    DoFs/Sec in SNES                   : 2.00778 (2.00778) million
+    L2 Error                           : 3.642097e-02
+    Total KSP Iterations               : 857
+    SNES Solve Time                    : 4.2571 (4.2571) sec
+    DoFs/Sec in SNES                   : 2.03827 (2.03827) million
+    L2 Error                           : 2.718173e-02
+    Total KSP Iterations               : 912
+    SNES Solve Time                    : 6.54994 (6.54994) sec
+    DoFs/Sec in SNES                   : 2.05223 (2.05223) million
+    L2 Error                           : 2.103374e-02
+    Total KSP Iterations               : 965
+    SNES Solve Time                    : 9.42631 (9.42631) sec
+    DoFs/Sec in SNES                   : 2.10653 (2.10653) million
+    L2 Error                           : 1.674251e-02
+    Total KSP Iterations               : 978
+    SNES Solve Time                    : 13.0199 (13.0199) sec
+    DoFs/Sec in SNES                   : 2.08694 (2.08694) million
+    L2 Error                           : 1.363195e-02
+    Total KSP Iterations               : 1017
+    SNES Solve Time                    : 17.6579 (17.6579) sec
+    DoFs/Sec in SNES                   : 2.10226 (2.10226) million
+    L2 Error                           : 1.130703e-02
+    Total KSP Iterations               : 1020
+    SNES Solve Time                    : 23.3766 (23.3766) sec
+    DoFs/Sec in SNES                   : 2.04531 (2.04531) million
+    L2 Error                           : 9.524649e-03
+    Total KSP Iterations               : 1019
+    SNES Solve Time                    : 29.6586 (29.6586) sec
+    DoFs/Sec in SNES                   : 2.02879 (2.02879) million
+    L2 Error                           : 8.128697e-03
+    Total KSP Iterations               : 1030
+    SNES Solve Time                    : 37.3844 (37.3844) sec
+    DoFs/Sec in SNES                   : 2.01587 (2.01587) million
+    L2 Error                           : 7.015351e-03
