@@ -1,0 +1,32 @@
+    Global nodes                       : 1331
+    Total KSP Iterations               : 557
+    SNES Solve Time                    : 0.400552 (0.400542) sec
+    DoFs/Sec in SNES                   : 5.5526 (5.55273) million
+    L2 Error                           : 2.743432e-02
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:33:35 2021
+Time (sec):           2.068e+00     1.009   2.066e+00
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+    Global nodes                       : 2744
+    Total KSP Iterations               : 754
+    SNES Solve Time                    : 0.810503 (0.810481) sec
+    DoFs/Sec in SNES                   : 7.65812 (7.65833) million
+    L2 Error                           : 5.985362e-03
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:34:09 2021
+Time (sec):           1.360e+00     1.001   1.360e+00
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+    Global nodes                       : 8000
+    Total KSP Iterations               : 1075
+    SNES Solve Time                    : 1.11122 (1.11121) sec
+    DoFs/Sec in SNES                   : 23.2177 (23.2179) million
+    L2 Error                           : 1.431734e-03
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:34:30 2021
+Time (sec):           1.652e+00     1.007   1.651e+00
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+    Global nodes                       : 12167
+    Total KSP Iterations               : 1347
+    SNES Solve Time                    : 1.40314 (1.40313) sec
+    DoFs/Sec in SNES                   : 35.0405 (35.0409) million
+    L2 Error                           : 9.399828e-04
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:34:55 2021
+Time (sec):           2.124e+00     1.005   2.124e+00
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU

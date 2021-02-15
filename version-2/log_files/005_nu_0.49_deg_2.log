@@ -1,0 +1,48 @@
+    Global nodes                       : 9261
+    Total KSP Iterations               : 45
+    SNES Solve Time                    : 0.0806212 (0.0806117) sec
+    DoFs/Sec in SNES                   : 15.5075 (15.5093) million
+    L2 Error                           : 1.678400e-03
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:14:23 2021
+Time (sec):           2.225e-01     1.001   2.223e-01
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+    Global nodes                       : 12167
+    Total KSP Iterations               : 46
+    SNES Solve Time                    : 0.0956781 (0.09567) sec
+    DoFs/Sec in SNES                   : 17.5489 (17.5504) million
+    L2 Error                           : 1.207327e-03
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:14:55 2021
+Time (sec):           1.972e-01     1.002   1.971e-01
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+    Global nodes                       : 79507
+    Total KSP Iterations               : 47
+    SNES Solve Time                    : 0.364185 (0.364133) sec
+    DoFs/Sec in SNES                   : 30.7824 (30.7868) million
+    L2 Error                           : 1.148219e-04
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:15:34 2021
+Time (sec):           6.991e-01     1.003   6.989e-01
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+    Global nodes                       : 91125
+    Total KSP Iterations               : 46
+    SNES Solve Time                    : 0.381787 (0.381779) sec
+    DoFs/Sec in SNES                   : 32.9379 (32.9386) million
+    L2 Error                           : 9.636036e-05
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:16:11 2021
+Time (sec):           1.304e+00     1.013   1.299e+00
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+    Global nodes                       : 493039
+    Total KSP Iterations               : 49
+    SNES Solve Time                    : 1.94743 (1.94739) sec
+    DoFs/Sec in SNES                   : 37.2166 (37.2174) million
+    L2 Error                           : 1.070310e-05
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:16:47 2021
+Time (sec):           2.697e+00     1.000   2.697e+00
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+    Global nodes                       : 531441
+    Total KSP Iterations               : 49
+    SNES Solve Time                    : 2.08586 (2.08582) sec
+    DoFs/Sec in SNES                   : 37.453 (37.4538) million
+    L2 Error                           : 9.699117e-06
+./elasticity on a mpich-O named noether with 64 processors, by arash Thu Feb 11 18:17:17 2021
+Time (sec):           2.940e+00     1.002   2.940e+00
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
