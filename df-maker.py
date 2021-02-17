@@ -137,6 +137,8 @@ if __name__ == "__main__":
 
     df = df.sort_values(["np", "nu", "p", "h", "run"], ascending = (True, True,True,True,True))
     print(df)
+    print('---------------------------')
+    print(df.head(10))
 
     #df.to_csv(r'data.csv', index = False, header=True)
     
