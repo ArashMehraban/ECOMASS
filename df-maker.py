@@ -136,9 +136,6 @@ if __name__ == "__main__":
     pd.set_option("display.max_rows", None, "display.max_columns", None, 'display.width', None, 'display.max_colwidth', -1)
 
     df = df.sort_values(["np", "nu", "p", "h", "run"], ascending = (True, True,True,True,True))
-    print(df)
-    print('---------------------------')
-    print(df.head(10))
 
     #df.to_csv(r'data.csv', index = False, header=True)
     
