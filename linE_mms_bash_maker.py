@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import subprocess
 
+#nu Dict: {poly : h-list}
 nu3 = OrderedDict({1:[26,76,77,125], 2:[6,10,11,18,19], 3:[4,5,6,7], 4:[2, 3, 4]})
 nu49 = OrderedDict({2:[13,22,23,40,41], 3:[5,8,9,12,13], 4:[3,4,7,8,9]})
 nu49999 = OrderedDict({2:[38,96,97], 3:[8,16,17], 4:[4,5,6]})
