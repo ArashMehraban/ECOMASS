@@ -10,7 +10,7 @@ nu499999 = OrderedDict({2:[13,38,39,110], 3:[7,8,16,17], 4:[5,6,10,11]})
 nus = OrderedDict({0.3:nu3, 0.49:nu49, 0.49999:nu49999, 0.499999:nu499999})
 
 repeat = 3
-nproc = [32, 64]
+nproc = [16, 32, 64]
 
 hsz = len([h for nu in nus for p in nus[nu] for h in nus[nu][p]])
 
@@ -24,7 +24,7 @@ E = "{:.2e}".format(1e8)
 
 #extract below keywords and values from code AND indicate which folder to store them in
 grep = " | grep \"L2 Error\|SNES Solve Time\|DoFs/Sec in SNES\|Total KSP Iterations\|Global nodes\|Time (sec)\|noether with\" > "
-folder_name = "log_files_linE/"
+folder_name = "log_files/"
 
 # Write bash file to be run 
 f = open(bash_file, "w")
