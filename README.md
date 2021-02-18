@@ -1,5 +1,7 @@
 # ECOMASS
 
+Run with `Python3`. It appears `python2` does not support `subprocess`
+
 `linE_mms_bash_maker.py` writes the `mms_run.sh` file
 
 `mms_run.sh` files is run on Noether.
