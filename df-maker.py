@@ -128,6 +128,7 @@ if __name__ == "__main__":
     #['nu','deg','h','run', 'Global nodes','Total KSP Iterations', 'SNES Solve Time', 'DoFs/Sec in SNES', 'L2 Error', './elasticity', 'Time (sec):', 'script']
     df_order = [0,1,2,8,11,10,6,5,4,7,9,3];
     df_vals = df_vals[:,df_order]
+    
     df_cols = ['nu', 'p', 'h', 'L2 Error', 'Total Time(s)', 'Petsc Time(s)', 'Solve Time(s)', '#CG', '#DoF', 'MDoFs/Sec', 'np', 'run']
     #create Dof from 'Global nodes'
     df_vals[:,8] *= 3
@@ -136,6 +137,28 @@ if __name__ == "__main__":
     pd.set_option("display.max_rows", None, "display.max_columns", None, 'display.width', None, 'display.max_colwidth', -1)
 
     df = df.sort_values(["np", "nu", "p", "h", "run"], ascending = (True, True,True,True,True))
+
+    repeat = 3
+    df_tmp = df.to_numpy()
+    r,c = df_tmp.shape
+
+    df_np_vals = np.zeros((int(r/3), int(c-1)))
+    j=0
+    for i in range(0,r,3):
+        df_np_vals[j] = (df_tmp[i,0:-1] + df_tmp[i+1,0:-1] + df_tmp[i+2,0:-1])/repeat
+        j=j+1
+        
+    
+    df_np_cols = ['nu', 'p', 'h', 'L2 Error', 'Total Time(s)', 'Petsc Time(s)', 'Solve Time(s)', '#CG', '#DoF', 'MDoFs/Sec', 'np']
+    dff = pd.DataFrame(df_np_vals, columns = df_np_cols)
+
+    dff["p"] = dff["p"].astype(int)
+    dff["h"] = dff["h"].astype(int)
+    dff["#CG"] = dff["#CG"].astype(int)
+    dff["#DoF"] = dff["#DoF"].astype(int)
+    dff["np"] = dff["np"].astype(int)
+    print(dff.head(12))
+
 
     #df.to_csv(r'data.csv', index = False, header=True)
     
