@@ -1,0 +1,9 @@
+    Global nodes                       : 15625
+    Total KSP Iterations               : 11
+    SNES Solve Time                    : 10.5283 (10.5283) sec
+    DoFs/Sec in SNES                   : 0.0489753 (0.0489753) million
+    L2 Error                           : 9.391153e-04
+./elasticity on a mpich-O named noether with 1 processor, by arash Sun Feb 21 06:37:06 2021
+Time (sec):           1.207e+01     1.000   1.207e+01
+Event                Count      Time (sec)     Flop                              --- Global ---  --- Stage ----  Total   GPU    - CpuToGpu -   - GpuToCpu - GPU
+script run time: 12.557416496
