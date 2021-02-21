@@ -77,7 +77,9 @@ def parse_file_content_linE_noether(filename, appCtx):
         elif grep[6] in line:
             file_data.append(float(ll[2])) 
         elif grep[7] in line:
-            file_data.append(float(ll[-1]))  
+            file_data.append(float(ll[-1]))
+    if len(file_data) < len(grep):
+        print(filename)
     fd.close()
     return file_data
 
@@ -111,7 +113,7 @@ def create_df_linE_noether(filenames_data , files_data):
             df_np_vals[k] += (df_tmp[i+j,0:-1])/repeat 
         k=k+1
 
-    df_np_cols = df_cols[0:-1] #drop runs column
+    df_np_cols = df_cols[0:-1] #drop 'run' column
     #create a final dataframe to return
     dff = pd.DataFrame(df_np_vals, columns = df_np_cols)
 
@@ -122,13 +124,117 @@ def create_df_linE_noether(filenames_data , files_data):
     dff["np"] = dff["np"].astype(int)
     return dff
 
-def plot_noether(df):
-    plt.plot([0, 1, 2, 3, 4], [0, 3, 5, 9, 11])
-    plt.xlabel('Months')
-    plt.ylabel('Books Read')
+def plot_linE_noether(df):
+    #filters:
+    #p 
+    p1 = df['p']==1
+    p2 = df['p']==2
+    p3 = df['p']==3
+    p4 = df['p']==4
+    # np (num processors)
+    np16 = df['np']==16
+    np32 = df['np']==32
+    np64 = df['np']==64
+    # nu
+    nu3 = df['nu']==0.3
+    nu49 = df['nu']==0.49
+    nu49999 = df['nu']==0.49999
+    nu499999 = df['nu']>(0.49999) #For some reason nu499999 = df['nu']==0.499999 does not work!
+##    err = df.where((np64 & nu3 & (df['L2 Error'] > 1e5) & (df['L2 Error'] < 1e6))).dropna()
+##    print(err)
+##    test_err = df['L2 Error']> 1e-5
+##    print(test_err)
+                   
+                   
+                  
+                   
+    # 
+    nus = np.unique(df['nu'])
+
+    pComp_filter = [p1,p2,p3,p4]
+    #np_filter = [np16, np32, np64]
+    
+
+    P_i_nu_3 = []
+    err_i_nu_3 = []
+    tot_time_i_nu_3 = []
+    for i in range(len(pComp_filter)):
+        h_p_i_nu3_np64 = df.where((np64 & nu3 & pComp_filter[i]))['h'].dropna()
+        P_i_nu_3.append(df.where((np64 & nu3 & h_p_i_nu3_np64))['p'].dropna())
+        err_i_nu_3.append(df.where((np64 & nu3 & pComp_filter[i]))['L2 Error'].dropna())
+        tot_time_i_nu_3.append(df.where((np64 & nu3 & pComp_filter[i]))['Total Time(s)'].dropna())
+  
+    
+    plt_marker = ['p', '*' , 'o', '^']
+    plt_linestyle = ['--g','--r', '--b','--k' ]
+    fig, ax = plt.subplots(2,2)
+    for i in range(len(P_i_nu_3)):
+        ax[0][0].semilogy(P_i_nu_3[i], err_i_nu_3[i], plt_linestyle[i], marker=plt_marker[i], label="p{}".format(i+1))
+        ax[0][0].set_ylabel('L2 Error')
+        ax[0][0].set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
+        ax[0][0].set_title(r'$\nu = 0.3$')
+        ax[0][0].legend(loc="upper right", shadow=True)
+
+    pIncomp_filter = [p2,p3,p4]
+
+    P_i_nu_49 = []
+    err_i_nu_49 = []
+    tot_time_i_nu_49 = []
+    for i in range(len(pIncomp_filter)):
+        h_p_i_nu49_np64 = df.where((np64 & nu49 & pIncomp_filter[i]))['h'].dropna()
+        P_i_nu_49.append(df.where((np64 & nu49 & h_p_i_nu49_np64))['p'].dropna())
+        err_i_nu_49.append(df.where((np64 & nu49 & pIncomp_filter[i]))['L2 Error'].dropna())
+        tot_time_i_nu_49.append(df.where((np64 & nu49 & pIncomp_filter[i]))['Total Time(s)'].dropna())
+  
+    for i in range(len(P_i_nu_49)):
+        ax[0][1].semilogy(P_i_nu_49[i], err_i_nu_49[i], plt_linestyle[i+1], marker=plt_marker[i+1], label="p{}".format(i+2))
+        ax[0][1].set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
+        ax[0][1].set_title(r'$\nu = 0.49$')
+        ax[0][1].legend(loc="upper right", shadow=True)
+
+    P_i_nu_49999 = []
+    err_i_nu_49999 = []
+    tot_time_i_nu_49999 = []
+    for i in range(len(pIncomp_filter)):
+        h_p_i_nu49999_np64 = df.where((np64 & nu49999 & pIncomp_filter[i]))['h'].dropna()
+        P_i_nu_49999.append(df.where((np64 & nu49999 & h_p_i_nu49999_np64))['p'].dropna())
+        err_i_nu_49999.append(df.where((np64 & nu49999 & pIncomp_filter[i]))['L2 Error'].dropna())
+        tot_time_i_nu_49999.append(df.where((np64 & nu49999 & pIncomp_filter[i]))['Total Time(s)'].dropna())
+  
+    for i in range(len(P_i_nu_49999)):
+        ax[1][0].semilogy(P_i_nu_49999[i], err_i_nu_49999[i], plt_linestyle[i+1], marker=plt_marker[i+1], label="p{}".format(i+2))
+        ax[1][0].set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
+        ax[1][0].set_ylabel('L2 Error')
+        ax[1][0].set_xlabel('poly order')
+        ax[1][0].set_title(r'$\nu = 0.49999$')
+        ax[1][0].legend(loc="upper right", shadow=True)
+
+    P_i_nu_499999 = []
+    err_i_nu_499999 = []
+    tot_time_i_nu_499999 = []
+    for i in range(len(pIncomp_filter)):
+        h_p_i_nu499999_np64 = df.where((np64 & nu499999 & pIncomp_filter[i]))['h'].dropna()
+        P_i_nu_499999.append(df.where((np64 & nu499999 & h_p_i_nu499999_np64))['p'].dropna())
+        err_i_nu_499999.append(df.where((np64 & nu499999 & pIncomp_filter[i]))['L2 Error'].dropna())
+        tot_time_i_nu_499999.append(df.where((np64 & nu499999 & pIncomp_filter[i]))['Total Time(s)'].dropna())
+  
+    for i in range(len(P_i_nu_499999)):
+        ax[1][1].semilogy(P_i_nu_499999[i], err_i_nu_499999[i], plt_linestyle[i+1], marker=plt_marker[i+1], label="p{}".format(i+2))
+        ax[1][1].set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
+        ax[1][1].set_xlabel('poly order')
+        ax[1][1].set_title(r'$\nu = 0.499999$')
+        ax[1][1].legend(loc="upper right", shadow=True)
+
+    #fig.suptitle('Polynomial order vs. $L^2$ Error on 64 processors')
+    plt.savefig('pVSerr.eps', format='eps')
+    manager = plt.get_current_fig_manager()
+    manager.resize(*manager.window.maxsize())
     plt.show()
-    plt.savefig('books_read.png')
-    plt.savefig('books_read.eps', format='eps')
+##    figure = plt.gcf()  # get current figure
+##    figure.set_size_inches(32, 18) # set figure's size manually to your full screen (32x18)
+##    plt.savefig('pVSerr.png', bbox_inches='tight')
+##    plt.savefig('pVSerr.eps', format='eps')
+    
 
 def digitize(item):
     if '.' in item:
@@ -152,6 +258,7 @@ def map_create(keywords, save_order):
 if __name__ == "__main__":
 
     folder_name = 'log_files'
+    #folder_name = 'log_files_linE_cpus_1_and_4_small_meshes'
     filename_ext = '.log'
     #idx: 0   1   2      3     4  5 6 7  8  9  10  11
     #    293_linE_nu_0.499999_deg_3_h_8_cpu_64_run_3.log
@@ -159,26 +266,27 @@ if __name__ == "__main__":
 
     logfile_keywords = ['Global nodes','Total KSP Iterations', 'SNES Solve Time', \
                         'DoFs/Sec in SNES', 'L2 Error', './elasticity', 'Time (sec):', 'script']
-    #line containing ./elasticity has number of processors
+                                        #line containing ./elasticity has number of processors
      
     appCtx=AppCtx()
-    #filename atributes for appCtx
+    #filename attributes for appCtx
     appCtx.filename_ext = filename_ext
     appCtx.keep_idx = keep_idx
     appCtx.parse_filename = parse_filename_linE_noether #function pointer
     
-    #file content atributes for appCtx
+    #file content attributes for appCtx
     appCtx.parse_file_content = parse_file_content_linE_noether #function pointer
     appCtx.logfile_keywords = logfile_keywords
 
     #parse files and filenames
     filenames_data , files_data = parse_log_files(folder_name, appCtx)
 
+   
     #create a dataframe
     df = create_df_linE_noether(filenames_data , files_data)
-    print(df.head(12))
-
-    plot_noether(df)
+  
+    plot_linE_noether(df)
+    print(df)
 
     
 
