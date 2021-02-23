@@ -276,6 +276,7 @@ def bend_409K_summit():
     plot_linE_summit_bend_409K(df)
 
 def plot_linE_summit_bend_weak(df):
+    print(df)
      #p
     p1 = df['p']==1
     p2 = df['p']==2
@@ -302,7 +303,7 @@ def plot_linE_summit_bend_weak(df):
     for item in ts:
         spdup = []
         for i in range(len(item)):
-            spdup.append(item.iloc[i]/item.iloc[0])
+            spdup.append(item.iloc[0]/item.iloc[i])
         plt.plot(nu3_cp, spdup, plt_linestyle[k], marker=plt_marker[k], label="p{}".format(k+1))
         k=k+1
 
