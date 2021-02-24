@@ -159,7 +159,7 @@ def plot_linE_noether_3D(df):
     plt_marker = ['p', '*' , 'o', '^' , 'x']
     plt_linestyle = ['--g','--r', '--b','--k', '--m' ]
     plt_color = ['g','r', 'b','k', 'm' ]
-    fig = plt.figure()
+    #fig = plt.figure()
     
     # FOR nu = 0.3 & error :10^(-4)       
     ax = fig.add_subplot(2, 2, 1, projection='3d')
@@ -277,7 +277,6 @@ def plot_linE_noether_2D(df):
     for i in range(len(pIncomp)):
         for j in range(len(nps)):
             h = df.where((nu49 & pIncomp[i] & nps[j] & err_4))['h'].dropna()
-            print(h)
             t = df.where((nu49 & pIncomp[i] & nps[j] & err_4))['Total Time(s)'].dropna()          
             ax[0][1].scatter(h, t, c=plt_color[j], marker=plt_marker[i+1]) 
             ax[0][1].set_ylabel('Time(s)')
@@ -301,7 +300,14 @@ def plot_linE_noether_2D(df):
             ax[1][1].set_ylabel('Time(s)')
             ax[1][1].set_xlabel('h')
             ax[1][1].set_title(r'$\nu = 0.499999$')
+    manager = plt.get_current_fig_manager()
+    #manager.resize(*manager.window.maxsize())
+    
+    figure = plt.gcf()  # get current figure
+    figure.set_size_inches(32, 18) # set figure's size manually to your full screen (32x18)
     plt.show()
+
+    plt.savefig('hp.eps', format='eps')
         
     
     
@@ -409,6 +415,191 @@ def map_create(keywords, save_order):
     return k2o
 
 
+
+def create_hp_tables(df):
+    p1 = df['p']==1
+    p2 = df['p']==2
+    p3 = df['p']==3
+    p4 = df['p']==4
+    # np (num processors)
+    np1 = df['np']== 1
+    np4 = df['np']== 4
+    np16 = df['np']==16
+    np32 = df['np']==32
+    np64 = df['np']==64
+    # nu
+    nu3 = df['nu']==0.3
+    nu49 = df['nu']==0.49
+    nu49999 = df['nu']==0.49999
+    nu499999 = df['nu']>(0.49999) #For some reason nu499999 = df['nu']==0.499999 does not work!
+    #
+    #err_4 means error with the order of 10^(-4) 
+    err_4 = ((df['L2 Error'] < 1e-3) & (df['L2 Error'] > 1e-4))
+    #err_5 means error with the order of 10^(-5)
+    err_5 = ((df['L2 Error'] < 1e-4) & (df['L2 Error'] > 1e-5))
+    #err_5 means error with the order of 10^(-6)
+    err_6 = ((df['L2 Error'] < 1e-5) & (df['L2 Error'] > 1e-6))
+
+    nps = [np1, np4, np16, np32, np64]
+
+    print('For nu = 0.3, errors: 1e-4, 1e-5, 1e-6--------------------------')
+    pComp = [p1, p2,p3,p4]    
+    compErrors = [err_4,err_5,err_6]
+    for err in compErrors:
+        #time and work for nu3 for all polys
+        nu3_time = []
+        nu3_work = []
+        for p in pComp:
+            for proc in nps:
+                t = df.where((nu3 & p & proc & err))['Total Time(s)'].dropna()
+                wnpt = df.where((nu3 & p & proc & err))['np'].dropna()
+                if t.empty:
+                    nu3_time.append(1000000)
+                    nu3_work.append(1000000)
+                else:
+                    work = t*wnpt
+                    nu3_time.append(min(t))
+                    nu3_work.append(min(work))
+
+        nu3_time = np.array(nu3_time)
+        nu3_work = np.array(nu3_work)
+        pvals = [1,2,3,4]
+        psz = len(pvals)
+        np_vals = [1,4,16,32,64]
+        npsz = len(np_vals)
+        np_dict = {}
+        for i in range(len(np_vals)):
+            np_dict[i] = np_vals[i]
+        nu3_table = []
+        for i in range(psz):
+            tmp_t = nu3_time[i*npsz:(i+1)*npsz]
+            tmp_w = nu3_work[i*npsz:(i+1)*npsz]
+            nu3_table.append(min(tmp_t))
+            nu3_table.append(np_dict[tmp_t.argmin(axis=None)])
+            nu3_table.append(min(tmp_w))
+            nu3_table.append(np_dict[tmp_w.argmin(axis=None)])
+
+        nu3_table = np.array(nu3_table)
+        nu3_table = np.reshape(nu3_table, (-1,4))
+        #np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
+
+        df_nu3_cols = ['Min Time(s)', 'Min Time #Procs', 'Min Work(s)', 'Min Work #Procs' ]
+        df_nu3 = pd.DataFrame(nu3_table, columns = df_nu3_cols)
+        df_nu3['Min Time #Procs'] = df_nu3['Min Time #Procs'].astype(int)
+        df_nu3['Min Work #Procs' ] = df_nu3['Min Work #Procs' ].astype(int)
+        df_nu3['Min Time(s)'] = df_nu3['Min Time(s)'] #.apply(lambda x: round(x, 2))
+        df_nu3['Min Work(s)'] = df_nu3['Min Work(s)'] #.apply(lambda x: round(x, 2))
+        print(df_nu3.to_latex())
+
+    errMsg = ['1e-4', '1e-5', '1e-6']
+    print('For nu = 0.49, errors: 1e-4, 1e-5, 1e-6--------------------------')
+    pInComp = [p2,p3,p4]    
+    incompErrors = [err_4,err_5,err_6]
+    for err in incompErrors:
+        #time and work for nu3 for all polys
+        nu3_time = []
+        nu3_work = []
+        for p in pInComp:
+            for proc in nps:
+                t = df.where((nu49 & p & proc & err))['Total Time(s)'].dropna()
+                wnpt = df.where((nu49 & p & proc & err))['np'].dropna()
+                if t.empty:
+                    nu3_time.append(1000000)
+                    nu3_work.append(1000000)
+                else:
+                    work = t*wnpt
+                    nu3_time.append(min(t))
+                    nu3_work.append(min(work))
+
+        nu3_time = np.array(nu3_time)
+        nu3_work = np.array(nu3_work)
+        pvals = [2,3,4]
+        psz = len(pvals)
+        np_vals = [1,4,16,32,64]
+        npsz = len(np_vals)
+        np_dict = {}
+        for i in range(len(np_vals)):
+            np_dict[i] = np_vals[i]
+        nu3_table = []
+        for i in range(psz):
+            tmp_t = nu3_time[i*npsz:(i+1)*npsz]
+            tmp_w = nu3_work[i*npsz:(i+1)*npsz]
+            nu3_table.append(min(tmp_t))
+            nu3_table.append(np_dict[tmp_t.argmin(axis=None)])
+            nu3_table.append(min(tmp_w))
+            nu3_table.append(np_dict[tmp_w.argmin(axis=None)])
+
+        nu3_table = np.array(nu3_table)
+        nu3_table = np.reshape(nu3_table, (-1,4))
+        #np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
+
+        df_nu3_cols = ['Min Time(s)', 'Min Time #Procs', 'Min Work(s)', 'Min Work #Procs' ]
+        df_nu3 = pd.DataFrame(nu3_table, columns = df_nu3_cols)
+        df_nu3['Min Time #Procs'] = df_nu3['Min Time #Procs'].astype(int)
+        df_nu3['Min Work #Procs' ] = df_nu3['Min Work #Procs' ].astype(int)
+        df_nu3['Min Time(s)'] = df_nu3['Min Time(s)'] #.apply(lambda x: round(x, 2))
+        df_nu3['Min Work(s)'] = df_nu3['Min Work(s)'] #.apply(lambda x: round(x, 2))
+        print(df_nu3.to_latex())
+
+    print('\n')
+    
+    print('For nu = 0.49999 & nu = 0.499999, errors: 1e-4, 1e-5--------------------------')
+    nuIncomp = [nu49999, nu499999]
+    pInComp = [p2,p3,p4]    
+    incompErrors = [err_4,err_5]
+    for nu in nuIncomp:
+        for err in incompErrors:
+            #time and work for nu3 for all polys
+            nu3_time = []
+            nu3_work = []
+            for p in pInComp:
+                for proc in nps:
+                    t = df.where((nu & p & proc & err))['Total Time(s)'].dropna()
+                    wnpt = df.where((nu & p & proc & err))['np'].dropna()
+                    if t.empty:
+                        nu3_time.append(1000000)
+                        nu3_work.append(1000000)
+                    else:
+                        work = t*wnpt
+                        nu3_time.append(min(t))
+                        nu3_work.append(min(work))
+
+            nu3_time = np.array(nu3_time)
+            nu3_work = np.array(nu3_work)
+            pvals = [2,3,4]
+            psz = len(pvals)
+            np_vals = [1,4,16,32,64]
+            npsz = len(np_vals)
+            np_dict = {}
+            for i in range(len(np_vals)):
+                np_dict[i] = np_vals[i]
+            nu3_table = []
+            for i in range(psz):
+                tmp_t = nu3_time[i*npsz:(i+1)*npsz]
+                tmp_w = nu3_work[i*npsz:(i+1)*npsz]
+                nu3_table.append(min(tmp_t))
+                nu3_table.append(np_dict[tmp_t.argmin(axis=None)])
+                nu3_table.append(min(tmp_w))
+                nu3_table.append(np_dict[tmp_w.argmin(axis=None)])
+
+            nu3_table = np.array(nu3_table)
+            nu3_table = np.reshape(nu3_table, (-1,4))
+            #np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
+
+            df_nu3_cols = ['Min Time(s)', 'Min Time #Procs', 'Min Work(s)', 'Min Work #Procs' ]
+            df_nu3 = pd.DataFrame(nu3_table, columns = df_nu3_cols)
+            df_nu3['Min Time #Procs'] = df_nu3['Min Time #Procs'].astype(int)
+            df_nu3['Min Work #Procs' ] = df_nu3['Min Work #Procs' ].astype(int)
+            df_nu3['Min Time(s)'] = df_nu3['Min Time(s)']#.apply(lambda x: round(x, 2))
+            df_nu3['Min Work(s)'] = df_nu3['Min Work(s)']#.apply(lambda x: round(x, 2))
+            print(df_nu3.to_latex())
+
+    
+    
+
+
+    
+
 if __name__ == "__main__":
 
     folder_name = 'log_files'
@@ -442,8 +633,9 @@ if __name__ == "__main__":
     #Does not look good
     #plot_linE_noether_3D(df)
 
-    plot_linE_noether_2D(df)
+    #plot_linE_noether_2D(df)
     #print(df)
+    create_hp_tables(df)
 
     
 
