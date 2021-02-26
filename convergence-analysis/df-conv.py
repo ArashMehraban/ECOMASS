@@ -158,20 +158,21 @@ def plot_linE_conv(df):
     err_p4 = df.where((p4))['L2 Error'].dropna()
 
     errs = [ err_p1, h_inv_2, err_p2, 0.2*h_inv_3, err_p3, 0.025*h_inv_4 , err_p4, 0.0025*h_inv_5]
-    h_invs = [h_inv_1, h_inv_1, h_inv_1, h_inv_1, h_inv_1, h_inv_1,h_inv_1, h_inv_1]
-    leg = ['p1','O($h^2$)','p1', 'O($h^3$)','p1','O($h^4$)' ,'p1','O($h^5$)']
+    
+    leg = ['p1','O($h$)','p1', 'O($h^2$)','p1','O($h^3$)' ,'p1','O($h^4$)']
 
     plt_marker = [ '*' ,'1', 'o' ,'1',  '^' ,'1', 'p','1']
     plt_linestyle = ['.g','g','.r', 'r' ,'.b', 'b', '.k', 'k' ]
     for i in range(len(errs)):
-        plt.loglog(h_invs[i], errs[i], plt_linestyle[i], marker=plt_marker[i], label=leg[i])
+        plt.loglog(h_inv_1, errs[i], plt_linestyle[i], marker=plt_marker[i], label=leg[i])
 
     plt.title('Error vs. h (loglog)')
     plt.legend(ncol = 2, loc="lower right", shadow=True)
     plt.xlabel('h')
+    #plt.xticks([])#, ['1/7','1/6', '1/5', '1/4', '1/3', '1'])
     plt.ylabel(r'$L^2$ Error')
     
-    plt.grid()
+    #plt.grid()
     plt.savefig('conv.eps', format='eps')
     plt.show()
 
