@@ -140,36 +140,32 @@ def plot_linE_conv(df):
 
     h = df.where((p1))['h'].dropna()
 
-    h_inv_1 = np.zeros(len(h))
-    h_inv_2 = np.zeros(len(h))
-    h_inv_3 = np.zeros(len(h))
-    h_inv_4 = np.zeros(len(h))
-    h_inv_5 = np.zeros(len(h))
-    for i in range(len(h_inv_2)):
-        h_inv_1[i] = 1.0/(h[i])
-        h_inv_2[i] = 1.0/(h[i]**2)
-        h_inv_3[i] = 1.0/(h[i]**3)
-        h_inv_4[i] = 1.0/(h[i]**4)
-        h_inv_5[i] = 1.0/(h[i]**5)
+    hh = h.to_numpy()
+    h_inv_1 = 1./hh
+    h_inv_2 = 1./(hh**2)
+    h_inv_3 = 1./(hh**3)
+    h_inv_4 = 1./(hh**4)
+    h_inv_5 = 1./(hh**5)
+
 
     err_p1 = df.where((p1))['L2 Error'].dropna()
     err_p2 = df.where((p2))['L2 Error'].dropna()
     err_p3 = df.where((p3))['L2 Error'].dropna()
     err_p4 = df.where((p4))['L2 Error'].dropna()
 
-    errs = [ err_p1, h_inv_2, err_p2, 0.2*h_inv_3, err_p3, 0.025*h_inv_4 , err_p4, 0.0025*h_inv_5]
+    errs = [ err_p1,  h_inv_2, err_p2     , 0.25*h_inv_3, err_p3,  0.025*h_inv_4 , err_p4,  0.0025*h_inv_5]
+    h_inv_s = [ h_inv_1, h_inv_1, h_inv_2, h_inv_2, h_inv_3, h_inv_3 , h_inv_4, h_inv_4]
     
-    leg = ['p1','O($h$)','p1', 'O($h^2$)','p1','O($h^3$)' ,'p1','O($h^4$)']
+    leg = ['p1','O($h$)','p2', 'O($h^2$)','p3','O($h^3$)' ,'p4','O($h^4$)']
 
     plt_marker = [ '*' ,'1', 'o' ,'1',  '^' ,'1', 'p','1']
     plt_linestyle = ['.g','g','.r', 'r' ,'.b', 'b', '.k', 'k' ]
     for i in range(len(errs)):
-        plt.loglog(h_inv_1, errs[i], plt_linestyle[i], marker=plt_marker[i], label=leg[i])
+        plt.loglog(h_inv_s[i], errs[i], plt_linestyle[i], marker=plt_marker[i], label=leg[i])
 
     plt.title('Error vs. h (loglog)')
     plt.legend(ncol = 2, loc="lower right", shadow=True)
     plt.xlabel('h')
-    #plt.xticks([])#, ['1/7','1/6', '1/5', '1/4', '1/3', '1'])
     plt.ylabel(r'$L^2$ Error')
     
     #plt.grid()
