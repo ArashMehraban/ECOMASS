@@ -138,39 +138,56 @@ def plot_linE_conv(df):
     p3 = df['p']==3
     p4 = df['p']==4
 
-    h = df.where((p1))['h'].dropna()
-
-    hh = h.to_numpy()
-    h_inv_1 = 1./hh
-    h_inv_2 = 1./(hh**2)
-    h_inv_3 = 1./(hh**3)
-    h_inv_4 = 1./(hh**4)
-    h_inv_5 = 1./(hh**5)
-
-
     err_p1 = df.where((p1))['L2 Error'].dropna()
     err_p2 = df.where((p2))['L2 Error'].dropna()
     err_p3 = df.where((p3))['L2 Error'].dropna()
     err_p4 = df.where((p4))['L2 Error'].dropna()
 
-    errs = [ err_p1,  h_inv_2, err_p2     , 0.25*h_inv_3, err_p3,  0.025*h_inv_4 , err_p4,  0.0025*h_inv_5]
-    h_inv_s = [ h_inv_1, h_inv_1, h_inv_2, h_inv_2, h_inv_3, h_inv_3 , h_inv_4, h_inv_4]
+    errs = [ err_p1, err_p2, err_p3, err_p4]   
     
-    leg = ['p1','O($h$)','p2', 'O($h^2$)','p3','O($h^3$)' ,'p4','O($h^4$)']
+    leg_reg = ['O($h$)','O($h^2$)','O($h^3$)','O($h^4$)']
 
-    plt_marker = [ '*' ,'1', 'o' ,'1',  '^' ,'1', 'p','1']
-    plt_linestyle = ['.g','g','.r', 'r' ,'.b', 'b', '.k', 'k' ]
+    plt_marker = [ '*','o', '^', 'p']
+    plt_linestyle = ['.g','.r', '.b', '.k']
+    reg_linestyle = ['g', 'r', 'b', 'k']    
+
+    h = df.where((p1))['h'].dropna()
+    H = 1.0/h.to_numpy()
     for i in range(len(errs)):
-        plt.loglog(h_inv_s[i], errs[i], plt_linestyle[i], marker=plt_marker[i], label=leg[i])
+        plt.loglog(H, errs[i], plt_linestyle[i], marker=plt_marker[i], label='p{}'.format(i+1))
+        m , b = lin_reg_fit(H,errs[i])
+        reg_y = m*H
+        #reg_H = m * H + b
+        plt.loglog(H, reg_y, reg_linestyle[i], marker='1') #, label='O({})'.format(m))
 
-    plt.title('Error vs. h (loglog)')
-    plt.legend(ncol = 2, loc="lower right", shadow=True)
-    plt.xlabel('h')
-    plt.ylabel(r'$L^2$ Error')
-    
-    #plt.grid()
+    plt.title('Error vs. 1/h (loglog)')
+    plt.legend(ncol = 2, loc="upper left", shadow=True)
+    plt.xlabel('1/h')
+    plt.ylabel(r'$L^2$ Error')    
     plt.savefig('conv.eps', format='eps')
     plt.show()
+
+
+def lin_reg_fit(x,y):
+
+    if x.shape != y.shape:
+        print('input size mismatch')
+    else:
+        n = x.size
+    xy = x * y
+    x_sq = x**2
+    sum_x = np.sum(x)
+    sum_y = np.sum(y)
+    sum_xy = np.sum(x*y)
+    sum_x_sq = np.sum(x_sq)
+
+    #slope
+    m = (n * sum_xy - sum_x * sum_y) /(n * sum_x_sq - sum_x**2)
+    #b
+    b = (sum_y - m * sum_x) / n
+
+    return m, b
+    
 
 
 
