@@ -331,6 +331,32 @@ def plot_time_err(df):
     figure.set_size_inches(32, 18) # set figure's size manually to your full screen (32x18)
     plt.show()
 
+def plot_time_err_seaborn(df):
+    import seaborn
+    df.rename(columns={'h': 'n', 'nu': 'ν'}, inplace=True)
+    df['ν'] = df['ν'].apply(lambda x: '{:.6}'.format(x))
+    print(df.tail())
+    nus = np.array([[0.3, 0.49], [0.49999, 0.499999]])
+    grid = seaborn.relplot(
+        data=df,
+        col='ν',
+        col_wrap=2,
+        col_order='0.3 0.49999 0.49 0.499999'.split(),
+        x='Solve Time(s)',
+        y='L2 Error',
+        hue='p',
+        size='np',
+        sizes=(30, 300),
+        alpha=0.7,
+        palette='colorblind',
+    )
+    for ax in grid.axes:
+        ax.set_xscale('log')
+        ax.set_yscale('log')
+    grid.tight_layout()
+    plt.savefig('error-time.png')
+    plt.show()
+
 ##  plt.savefig('hp.eps', format='eps')
 
 def run_time_err():
@@ -357,7 +383,7 @@ def run_time_err():
     filenames_data , files_data = parse_log_files(folder_name, appCtx)   
     #create a dataframe
     df = create_df_linE_noether(filenames_data , files_data)
-    plot_time_err(df)
+    plot_time_err_seaborn(df)
     
        
 
