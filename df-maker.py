@@ -331,10 +331,15 @@ def plot_time_err(df):
     figure.set_size_inches(32, 18) # set figure's size manually to your full screen (32x18)
     plt.show()
 
-def plot_time_err_seaborn(df):
+def plot_time_err_seaborn(df, x='Solve Time (s)', filename=None):
     import seaborn
-    df.rename(columns={'h': 'n', 'nu': 'ν'}, inplace=True)
+    df.rename(columns={
+        'h': 'n',
+        'nu': 'ν',
+        'Solve Time(s)': 'Solve Time (s)',
+    }, inplace=True)
     df['ν'] = df['ν'].apply(lambda x: '{:.6}'.format(x))
+    df['Cost'] = df['Solve Time (s)'] * df['np']
     print(df.tail())
     nus = np.array([[0.3, 0.49], [0.49999, 0.499999]])
     grid = seaborn.relplot(
@@ -342,7 +347,7 @@ def plot_time_err_seaborn(df):
         col='ν',
         col_wrap=2,
         col_order='0.3 0.49999 0.49 0.499999'.split(),
-        x='Solve Time(s)',
+        x=x,
         y='L2 Error',
         hue='p',
         size='np',
@@ -354,7 +359,8 @@ def plot_time_err_seaborn(df):
         ax.set_xscale('log')
         ax.set_yscale('log')
     grid.tight_layout()
-    plt.savefig('error-time.png')
+    if filename:
+        plt.savefig(filename)
     plt.show()
 
 ##  plt.savefig('hp.eps', format='eps')
@@ -383,7 +389,8 @@ def run_time_err():
     filenames_data , files_data = parse_log_files(folder_name, appCtx)   
     #create a dataframe
     df = create_df_linE_noether(filenames_data , files_data)
-    plot_time_err_seaborn(df)
+    #plot_time_err_seaborn(df, 'Solve Time (s)', 'error-time.png')
+    plot_time_err_seaborn(df, 'Cost', 'error-cost.png')
     
        
 
