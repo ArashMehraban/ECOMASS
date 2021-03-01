@@ -102,7 +102,7 @@ def create_df_linE_noether(filenames_data , files_data):
     df = pd.DataFrame(df_vals, columns = df_cols)
     pd.set_option("display.max_rows", None, "display.max_columns", None, 'display.width', None, 'display.max_colwidth', -1)
 
-    df = df.sort_values(["np", "nu", "p", "h", "run"], ascending = (True, True,True,True,True))
+    df = df.sort_values(['np', 'nu', 'p', 'h', 'run'], ascending = (True, True,True,True,True))
 
     repeat = 3
     df_tmp = df.to_numpy()
@@ -126,276 +126,6 @@ def create_df_linE_noether(filenames_data , files_data):
     dff["np"] = dff["np"].astype(int)
     return dff
 
-#3D plots are NOT appropriate for this study
-def plot_linE_noether_3D(df):
-    #filters:
-    #p 
-    p1 = df['p']==1
-    p2 = df['p']==2
-    p3 = df['p']==3
-    p4 = df['p']==4
-    # np (num processors)
-    np1 = df['np']== 1
-    np4 = df['np']== 4
-    np16 = df['np']==16
-    np32 = df['np']==32
-    np64 = df['np']==64
-    # nu
-    nu3 = df['nu']==0.3
-    nu49 = df['nu']==0.49
-    nu49999 = df['nu']==0.49999
-    nu499999 = df['nu']>(0.49999) #For some reason nu499999 = df['nu']==0.499999 does not work!
-    #
-    #err_4 means error with the order of 10^(-4) 
-    err_4 = ((df['L2 Error'] < 1e-3) & (df['L2 Error'] > 1e-4))
-    #err_5 means error with the order of 10^(-5)
-    err_5 = ((df['L2 Error'] < 1e-4) & (df['L2 Error'] > 1e-5))
-    #err_5 means error with the order of 10^(-6)
-    err_6 = ((df['L2 Error'] < 1e-5) & (df['L2 Error'] > 1e-6))
-
-    num_nps = np.unique(df['np'])
-    nps = [np1, np4, np16, np32, np64]
-
-    plt_marker = ['p', '*' , 'o', '^' , 'x']
-    plt_linestyle = ['--g','--r', '--b','--k', '--m' ]
-    plt_color = ['g','r', 'b','k', 'm' ]
-    #fig = plt.figure()
-    
-    # FOR nu = 0.3 & error :10^(-4)       
-    ax = fig.add_subplot(2, 2, 1, projection='3d')
-    for i in range(len(nps)):
-        h = df.where((nps[i] & nu3 & err_4))['h'].dropna()
-        p = df.where((nps[i] & nu3 & err_4))['p'].dropna()
-        t = df.where((nps[i] & nu3 & err_4))['Total Time(s)'].dropna()
-        #surf = ax.plot(p, h, t, plt_linestyle[i], label="np = {}".format(num_nps[i]), marker=plt_marker[i])
-        scat = ax.scatter(p,h,t, c=plt_color[i], label="np = {}".format(num_nps[i]), marker=plt_marker[i])
-        ax.set_xlabel('poly order')
-        ax.set_ylabel('h')        
-        ax.set_zlabel('Time(s)')
-        ax.set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
-        #ax.set_title(r'$\nu = 0.3$')
-        ax.legend(loc="upper left", title='L$^2$ Error: 10$^{-4}$', shadow=True)
-
-    # FOR nu = 0.3 & error :10^(-5)       
-    ax = fig.add_subplot(2, 2, 2, projection='3d')
-    for i in range(len(nps)):
-        h = df.where((nps[i] & nu3 & err_5))['h'].dropna()
-        p = df.where((nps[i] & nu3 & err_5))['p'].dropna()
-        t = df.where((nps[i] & nu3 & err_5))['Total Time(s)'].dropna()
-        #surf = ax.plot(p, h, t, plt_linestyle[i], label="np = {}".format(num_nps[i]), marker=plt_marker[i])
-        scat = ax.scatter(p,h,t, c=plt_color[i], label="np = {}".format(num_nps[i]), marker=plt_marker[i])
-        ax.set_xlabel('poly order')
-        ax.set_ylabel('h')        
-        ax.set_zlabel('Time(s)')
-        ax.set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
-        #ax.set_title(r'$\nu = 0.3$')
-        ax.legend(loc="upper left", title='L$^2$ Error: 10$^{-5}$', shadow=True)
-
-    # FOR nu = 0.3 & error :10^(-6)       
-    ax = fig.add_subplot(2, 2, 3, projection='3d')
-    for i in range(len(nps)):
-        h = df.where((nps[i] & nu3 & err_6))['h'].dropna()
-        p = df.where((nps[i] & nu3 & err_6))['p'].dropna()
-        t = df.where((nps[i] & nu3 & err_6))['Total Time(s)'].dropna()
-        #surf = ax.plot(p, h, t, plt_linestyle[i], label="np = {}".format(num_nps[i]), marker=plt_marker[i])
-        scat = ax.scatter(p,h,t, c=plt_color[i], label="np = {}".format(num_nps[i]), marker=plt_marker[i])
-        ax.set_xlabel('poly order')
-        ax.set_ylabel('h')        
-        ax.set_zlabel('Time(s)')
-        ax.set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
-        #ax.set_title(r'$\nu = 0.3$')
-        ax.legend(loc="upper left", title='L$^2$ Error: 10$^{-6}$', shadow=True)
-
-    fig.suptitle(r'$\nu = 0.3$')
-    plt.show()
-##    #Best time for 10^(-4)
-##    df4 = df.where((nu3 & err_4)).dropna()
-##    print(df.where(df4['Total Time(s)'] == df4['Total Time(s)'].min()).dropna())
-##
-##   # df = df.                              .sort_values(["np", "nu", "p", "h", "run"], ascending = (True, True,True,True,True))
-##    dftt = df.where((nu3 & err_4)).dropna().sort_values(['Total Time(s)'], ascending = (True))
-##    print(dftt)
-
-
-
-def plot_linE_noether_2D(df):
-    #filters:
-    #p 
-    p1 = df['p']==1
-    p2 = df['p']==2
-    p3 = df['p']==3
-    p4 = df['p']==4
-    # np (num processors)
-    np1 = df['np']== 1
-    np4 = df['np']== 4
-    np16 = df['np']==16
-    np32 = df['np']==32
-    np64 = df['np']==64
-    # nu
-    nu3 = df['nu']==0.3
-    nu49 = df['nu']==0.49
-    nu49999 = df['nu']==0.49999
-    nu499999 = df['nu']>(0.49999) #For some reason nu499999 = df['nu']==0.499999 does not work!
-    #
-    #err_4 means error with the order of 10^(-4) 
-    err_4 = ((df['L2 Error'] < 1e-3) & (df['L2 Error'] > 1e-4))
-    #err_5 means error with the order of 10^(-5)
-    err_5 = ((df['L2 Error'] < 1e-4) & (df['L2 Error'] > 1e-5))
-    #err_5 means error with the order of 10^(-6)
-    err_6 = ((df['L2 Error'] < 1e-5) & (df['L2 Error'] > 1e-6))
-
-    nps = [np1, np4, np16, np32, np64]
-
-    proc=[1,4,16,32,64]
-    pComp = [p1,p2,p3,p4]
-    pIncomp = [p2,p3,p4]
-
-    legend_elements = [Line2D([0], [0], marker='p', label='p1',markersize=10),
-                       Line2D([0], [0], marker='*', label='p2',markersize=10),
-                       Line2D([0], [0], marker='o', label='p3',markersize=10),
-                       Line2D([0], [0], marker='^', label='p4',markersize=10),
-                       Line2D([0], [0], marker='s', color='k', label='1 cpu'),
-                       Line2D([0], [0], marker='s', color='b', label='4 cpu'),
-                       Line2D([0], [0], marker='s', color='r', label='16 cpu'),
-                       Line2D([0], [0], marker='s', color='g', label='32 cpu'),
-                       Line2D([0], [0], marker='s', color='orange', label='64 cpu'),] 
-                # p1   p2    p3   p4
-    plt_marker = ['p', '*' , 'o', '^']    
-    plt_color = ['k', 'b', 'r', 'g', 'orange']
-    fig, ax = plt.subplots(2,2)
-    for i in range(len(pComp)):
-        for j in range(len(nps)):
-            h = df.where((nu3 & pComp[i] & nps[j] & err_4))['h'].dropna()
-            t = df.where((nu3 & pComp[i] & nps[j] & err_4))['Total Time(s)'].dropna()          
-            ax[0][0].scatter(h, t, c=plt_color[j], marker=plt_marker[i]) #, label=pl_label) #"p{}".format(i+1))
-            ax[0][0].set_ylabel('Time(s)')
-            ax[0][0].set_xlabel('h')
-            ax[0][0].set_title(r'$\nu = 0.3$')
-            ax[0][0].legend(ncol=10, handles=legend_elements, loc="upper center", bbox_to_anchor=(1.1, 1.25), shadow=True)
-            #ax[0][0].legend( ncol=4, handleheight=0.5, labelspacing=0.05, loc="upper center", bbox_to_anchor=(1.1, 1.25), shadow=True)
-
-    for i in range(len(pIncomp)):
-        for j in range(len(nps)):
-            h = df.where((nu49 & pIncomp[i] & nps[j] & err_4))['h'].dropna()
-            t = df.where((nu49 & pIncomp[i] & nps[j] & err_4))['Total Time(s)'].dropna()          
-            ax[0][1].scatter(h, t, c=plt_color[j], marker=plt_marker[i+1]) 
-            ax[0][1].set_ylabel('Time(s)')
-            ax[0][1].set_xlabel('h')
-            ax[0][1].set_title(r'$\nu = 0.49$')
-
-    for i in range(len(pIncomp)):
-        for j in range(len(nps)):
-            h = df.where((nu49999 & pIncomp[i] & nps[j] & err_4))['h'].dropna()
-            t = df.where((nu49999 & pIncomp[i] & nps[j] & err_4))['Total Time(s)'].dropna()          
-            ax[1][0].scatter(h, t, c=plt_color[j], marker=plt_marker[i+1]) 
-            ax[1][0].set_ylabel('Time(s)')
-            ax[1][0].set_xlabel('h')
-            ax[1][0].set_title(r'$\nu = 0.49999$')
-            
-    for i in range(len(pIncomp)):
-        for j in range(len(nps)):
-            h = df.where((nu499999 & pIncomp[i] & nps[j] & err_4))['h'].dropna()
-            t = df.where((nu499999 & pIncomp[i] & nps[j] & err_4))['Total Time(s)'].dropna()          
-            ax[1][1].scatter(h, t, c=plt_color[j], marker=plt_marker[i+1]) 
-            ax[1][1].set_ylabel('Time(s)')
-            ax[1][1].set_xlabel('h')
-            ax[1][1].set_title(r'$\nu = 0.499999$')
-    manager = plt.get_current_fig_manager()
-    #manager.resize(*manager.window.maxsize())
-    
-    figure = plt.gcf()  # get current figure
-    figure.set_size_inches(32, 18) # set figure's size manually to your full screen (32x18)
-    plt.show()
-
-    plt.savefig('hp.eps', format='eps')
-        
-    
-    
-
-##    P_i_nu_3 = []
-##    err_i_nu_3 = []
-##    tot_time_i_nu_3 = []
-##    for i in range(len(pComp_filter)):
-##        h_p_i_nu3_np64 = df.where((np64 & nu3 & pComp_filter[i]))['h'].dropna()
-##        P_i_nu_3.append(df.where((np64 & nu3 & h_p_i_nu3_np64))['p'].dropna())
-##        err_i_nu_3.append(df.where((np64 & nu3 & pComp_filter[i]))['L2 Error'].dropna())
-##        tot_time_i_nu_3.append(df.where((np64 & nu3 & pComp_filter[i]))['Total Time(s)'].dropna())
-##  
-##                # p1   p2    p3   p4
-##    plt_marker = ['s', '*' , 'o', '^'] 
-##    plt_linestyle = ['g','r', 'b','k' ]
-##    
-##    plt_color = ['orange','b','r','g','b','k' ]
-##    fig, ax = plt.subplots(2,2)
-##    for i in range(len(pComp_filter)):
-##        h = df.where((nu3, pComp_filter[i], nps[i] & err_4))['h'].dropna()
-##        ax[0][0].scatter(P_i_nu_3[i], err_i_nu_3[i], c=plt_color[i], marker=plt_marker[i], label="p{}".format(i+1))
-##        ax[0][0].set_ylabel('Time(s)')
-##        ax[0][0].set_xlabel('h')
-##        ax[0][0].set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
-##        ax[0][0].set_title(r'$\nu = 0.3$')
-##        ax[0][0].legend(loc="upper right", shadow=True)
-##
-##    pIncomp_filter = [p2,p3,p4]
-##
-##    P_i_nu_49 = []
-##    err_i_nu_49 = []
-##    tot_time_i_nu_49 = []
-##    for i in range(len(pIncomp_filter)):
-##        h_p_i_nu49_np64 = df.where((np64 & nu49 & pIncomp_filter[i]))['h'].dropna()
-##        P_i_nu_49.append(df.where((np64 & nu49 & h_p_i_nu49_np64))['p'].dropna())
-##        err_i_nu_49.append(df.where((np64 & nu49 & pIncomp_filter[i]))['L2 Error'].dropna())
-##        tot_time_i_nu_49.append(df.where((np64 & nu49 & pIncomp_filter[i]))['Total Time(s)'].dropna())
-##  
-##    for i in range(len(P_i_nu_49)):
-##        ax[0][1].semilogy(P_i_nu_49[i], err_i_nu_49[i], plt_linestyle[i+1], marker=plt_marker[i+1], label="p{}".format(i+2))
-##        ax[0][1].set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
-##        ax[0][1].set_title(r'$\nu = 0.49$')
-##        ax[0][1].legend(loc="upper right", shadow=True)
-##
-##    P_i_nu_49999 = []
-##    err_i_nu_49999 = []
-##    tot_time_i_nu_49999 = []
-##    for i in range(len(pIncomp_filter)):
-##        h_p_i_nu49999_np64 = df.where((np64 & nu49999 & pIncomp_filter[i]))['h'].dropna()
-##        P_i_nu_49999.append(df.where((np64 & nu49999 & h_p_i_nu49999_np64))['p'].dropna())
-##        err_i_nu_49999.append(df.where((np64 & nu49999 & pIncomp_filter[i]))['L2 Error'].dropna())
-##        tot_time_i_nu_49999.append(df.where((np64 & nu49999 & pIncomp_filter[i]))['Total Time(s)'].dropna())
-##  
-##    for i in range(len(P_i_nu_49999)):
-##        ax[1][0].semilogy(P_i_nu_49999[i], err_i_nu_49999[i], plt_linestyle[i+1], marker=plt_marker[i+1], label="p{}".format(i+2))
-##        ax[1][0].set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
-##        ax[1][0].set_ylabel('L2 Error')
-##        ax[1][0].set_xlabel('poly order')
-##        ax[1][0].set_title(r'$\nu = 0.49999$')
-##        ax[1][0].legend(loc="upper right", shadow=True)
-##
-##    P_i_nu_499999 = []
-##    err_i_nu_499999 = []
-##    tot_time_i_nu_499999 = []
-##    for i in range(len(pIncomp_filter)):
-##        h_p_i_nu499999_np64 = df.where((np64 & nu499999 & pIncomp_filter[i]))['h'].dropna()
-##        P_i_nu_499999.append(df.where((np64 & nu499999 & h_p_i_nu499999_np64))['p'].dropna())
-##        err_i_nu_499999.append(df.where((np64 & nu499999 & pIncomp_filter[i]))['L2 Error'].dropna())
-##        tot_time_i_nu_499999.append(df.where((np64 & nu499999 & pIncomp_filter[i]))['Total Time(s)'].dropna())
-##  
-##    for i in range(len(P_i_nu_499999)):
-##        ax[1][1].semilogy(P_i_nu_499999[i], err_i_nu_499999[i], plt_linestyle[i+1], marker=plt_marker[i+1], label="p{}".format(i+2))
-##        ax[1][1].set_xticks([0, 1, 2, 3, 4, 5], ['1', '2','3','4','5'])
-##        ax[1][1].set_xlabel('poly order')
-##        ax[1][1].set_title(r'$\nu = 0.499999$')
-##        ax[1][1].legend(loc="upper right", shadow=True)
-
-##    #fig.suptitle('Polynomial order vs. $L^2$ Error on 64 processors')
-##    plt.savefig('pVSerr.eps', format='eps')
-##    manager = plt.get_current_fig_manager()
-##    manager.resize(*manager.window.maxsize())
-##    plt.show()
-##    figure = plt.gcf()  # get current figure
-##    figure.set_size_inches(32, 18) # set figure's size manually to your full screen (32x18)
-##    plt.savefig('pVSerr.png', bbox_inches='tight')
-##    plt.savefig('pVSerr.eps', format='eps')
-
 def digitize(item):
     if '.' in item:
         item.replace('.', '', 1).isdigit()
@@ -404,35 +134,16 @@ def digitize(item):
         return int(item)
     else:
         return
-
-def map_create(keywords, save_order):
-    if(len(keywords) != len(save_order)):
-        print('Error! {} and {} must be same size'.format(keywords, save_order))
-        sys.exit(1)
-    k2o =OrderedDict()
-    for i in range(len(save_order)):
-        k2o[keywords[i]] = save_order.index(save_order[i])   
-    return k2o
-
-
-
-def create_hp_tables(df):
+        
+  
+def plot_conv_2D(df):
+    #filters:
+    #p 
     p1 = df['p']==1
     p2 = df['p']==2
     p3 = df['p']==3
     p4 = df['p']==4
-    # np (num processors)
-    np1 = df['np']== 1
-    np4 = df['np']== 4
-    np16 = df['np']==16
-    np32 = df['np']==32
-    np64 = df['np']==64
-    # nu
-    nu3 = df['nu']==0.3
-    nu49 = df['nu']==0.49
-    nu49999 = df['nu']==0.49999
-    nu499999 = df['nu']>(0.49999) #For some reason nu499999 = df['nu']==0.499999 does not work!
-    #
+    
     #err_4 means error with the order of 10^(-4) 
     err_4 = ((df['L2 Error'] < 1e-3) & (df['L2 Error'] > 1e-4))
     #err_5 means error with the order of 10^(-5)
@@ -440,170 +151,62 @@ def create_hp_tables(df):
     #err_5 means error with the order of 10^(-6)
     err_6 = ((df['L2 Error'] < 1e-5) & (df['L2 Error'] > 1e-6))
 
-    nps = [np1, np4, np16, np32, np64]
+    hp1 = df.where((p1))['h'].dropna().to_numpy()
+    ep1 = df.where((p1))['L2 Error'].dropna().to_numpy()
+    hp2 = df.where((p2))['h'].dropna().to_numpy()
+    ep2 = df.where((p2))['L2 Error'].dropna().to_numpy()
+    hp3 = df.where((p3))['h'].dropna().to_numpy()
+    ep3 = df.where((p3))['L2 Error'].dropna().to_numpy()
+    hp4 = df.where((p4))['h'].dropna().to_numpy()
+    ep4 = df.where((p4))['L2 Error'].dropna().to_numpy()
 
-    print('For nu = 0.3, errors: 1e-4, 1e-5, 1e-6--------------------------')
-    pComp = [p1, p2,p3,p4]    
-    compErrors = [err_4,err_5,err_6]
-    for err in compErrors:
-        #time and work for nu3 for all polys
-        nu3_time = []
-        nu3_work = []
-        for p in pComp:
-            for proc in nps:
-                t = df.where((nu3 & p & proc & err))['Total Time(s)'].dropna()
-                wnpt = df.where((nu3 & p & proc & err))['np'].dropna()
-                if t.empty:
-                    nu3_time.append(1000000)
-                    nu3_work.append(1000000)
-                else:
-                    work = t*wnpt
-                    nu3_time.append(min(t))
-                    nu3_work.append(min(work))
+    print('slope for p1 by truncating superlinear data:')
+    s,bb = lin_reg_fit(np.log10(1./hp1[-6:-1]), np.log10(ep1[-6:-1]))
+    print(s)
 
-        nu3_time = np.array(nu3_time)
-        nu3_work = np.array(nu3_work)
-        pvals = [1,2,3,4]
-        psz = len(pvals)
-        np_vals = [1,4,16,32,64]
-        npsz = len(np_vals)
-        np_dict = {}
-        for i in range(len(np_vals)):
-            np_dict[i] = np_vals[i]
-        nu3_table = []
-        for i in range(psz):
-            tmp_t = nu3_time[i*npsz:(i+1)*npsz]
-            tmp_w = nu3_work[i*npsz:(i+1)*npsz]
-            nu3_table.append(min(tmp_t))
-            nu3_table.append(np_dict[tmp_t.argmin(axis=None)])
-            nu3_table.append(min(tmp_w))
-            nu3_table.append(np_dict[tmp_w.argmin(axis=None)])
+    hs= [hp1,hp2,hp3,hp4]
+    errs = [ep1,ep2,ep3,ep4]
 
-        nu3_table = np.array(nu3_table)
-        nu3_table = np.reshape(nu3_table, (-1,4))
-        #np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
-
-        df_nu3_cols = ['Min Time(s)', 'Min Time #Procs', 'Min Work(s)', 'Min Work #Procs' ]
-        df_nu3 = pd.DataFrame(nu3_table, columns = df_nu3_cols)
-        df_nu3['Min Time #Procs'] = df_nu3['Min Time #Procs'].astype(int)
-        df_nu3['Min Work #Procs' ] = df_nu3['Min Work #Procs' ].astype(int)
-        df_nu3['Min Time(s)'] = df_nu3['Min Time(s)'] #.apply(lambda x: round(x, 2))
-        df_nu3['Min Work(s)'] = df_nu3['Min Work(s)'] #.apply(lambda x: round(x, 2))
-        print(df_nu3.to_latex())
-
-    errMsg = ['1e-4', '1e-5', '1e-6']
-    print('For nu = 0.49, errors: 1e-4, 1e-5, 1e-6--------------------------')
-    pInComp = [p2,p3,p4]    
-    incompErrors = [err_4,err_5,err_6]
-    for err in incompErrors:
-        #time and work for nu3 for all polys
-        nu3_time = []
-        nu3_work = []
-        for p in pInComp:
-            for proc in nps:
-                t = df.where((nu49 & p & proc & err))['Total Time(s)'].dropna()
-                wnpt = df.where((nu49 & p & proc & err))['np'].dropna()
-                if t.empty:
-                    nu3_time.append(1000000)
-                    nu3_work.append(1000000)
-                else:
-                    work = t*wnpt
-                    nu3_time.append(min(t))
-                    nu3_work.append(min(work))
-
-        nu3_time = np.array(nu3_time)
-        nu3_work = np.array(nu3_work)
-        pvals = [2,3,4]
-        psz = len(pvals)
-        np_vals = [1,4,16,32,64]
-        npsz = len(np_vals)
-        np_dict = {}
-        for i in range(len(np_vals)):
-            np_dict[i] = np_vals[i]
-        nu3_table = []
-        for i in range(psz):
-            tmp_t = nu3_time[i*npsz:(i+1)*npsz]
-            tmp_w = nu3_work[i*npsz:(i+1)*npsz]
-            nu3_table.append(min(tmp_t))
-            nu3_table.append(np_dict[tmp_t.argmin(axis=None)])
-            nu3_table.append(min(tmp_w))
-            nu3_table.append(np_dict[tmp_w.argmin(axis=None)])
-
-        nu3_table = np.array(nu3_table)
-        nu3_table = np.reshape(nu3_table, (-1,4))
-        #np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
-
-        df_nu3_cols = ['Min Time(s)', 'Min Time #Procs', 'Min Work(s)', 'Min Work #Procs' ]
-        df_nu3 = pd.DataFrame(nu3_table, columns = df_nu3_cols)
-        df_nu3['Min Time #Procs'] = df_nu3['Min Time #Procs'].astype(int)
-        df_nu3['Min Work #Procs' ] = df_nu3['Min Work #Procs' ].astype(int)
-        df_nu3['Min Time(s)'] = df_nu3['Min Time(s)'] #.apply(lambda x: round(x, 2))
-        df_nu3['Min Work(s)'] = df_nu3['Min Work(s)'] #.apply(lambda x: round(x, 2))
-        print(df_nu3.to_latex())
-
-    print('\n')
-    
-    print('For nu = 0.49999 & nu = 0.499999, errors: 1e-4, 1e-5--------------------------')
-    nuIncomp = [nu49999, nu499999]
-    pInComp = [p2,p3,p4]    
-    incompErrors = [err_4,err_5]
-    for nu in nuIncomp:
-        for err in incompErrors:
-            #time and work for nu3 for all polys
-            nu3_time = []
-            nu3_work = []
-            for p in pInComp:
-                for proc in nps:
-                    t = df.where((nu & p & proc & err))['Total Time(s)'].dropna()
-                    wnpt = df.where((nu & p & proc & err))['np'].dropna()
-                    if t.empty:
-                        nu3_time.append(1000000)
-                        nu3_work.append(1000000)
-                    else:
-                        work = t*wnpt
-                        nu3_time.append(min(t))
-                        nu3_work.append(min(work))
-
-            nu3_time = np.array(nu3_time)
-            nu3_work = np.array(nu3_work)
-            pvals = [2,3,4]
-            psz = len(pvals)
-            np_vals = [1,4,16,32,64]
-            npsz = len(np_vals)
-            np_dict = {}
-            for i in range(len(np_vals)):
-                np_dict[i] = np_vals[i]
-            nu3_table = []
-            for i in range(psz):
-                tmp_t = nu3_time[i*npsz:(i+1)*npsz]
-                tmp_w = nu3_work[i*npsz:(i+1)*npsz]
-                nu3_table.append(min(tmp_t))
-                nu3_table.append(np_dict[tmp_t.argmin(axis=None)])
-                nu3_table.append(min(tmp_w))
-                nu3_table.append(np_dict[tmp_w.argmin(axis=None)])
-
-            nu3_table = np.array(nu3_table)
-            nu3_table = np.reshape(nu3_table, (-1,4))
-            #np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
-
-            df_nu3_cols = ['Min Time(s)', 'Min Time #Procs', 'Min Work(s)', 'Min Work #Procs' ]
-            df_nu3 = pd.DataFrame(nu3_table, columns = df_nu3_cols)
-            df_nu3['Min Time #Procs'] = df_nu3['Min Time #Procs'].astype(int)
-            df_nu3['Min Work #Procs' ] = df_nu3['Min Work #Procs' ].astype(int)
-            df_nu3['Min Time(s)'] = df_nu3['Min Time(s)']#.apply(lambda x: round(x, 2))
-            df_nu3['Min Work(s)'] = df_nu3['Min Work(s)']#.apply(lambda x: round(x, 2))
-            print(df_nu3.to_latex())
-
-    
-    
+    plt_marker = [ '*','o', '^', 'p']
+    plt_linestyle = ['.g','.r', '.b', '.k']
+    for i in range(len(errs)):
+        plt.loglog(1.0/hs[i], errs[i], plt_linestyle[i], marker=plt_marker[i], label='p{}'.format(i+1))
+        if i == 0:
+            continue
+        else:
+            print('slope for p{} based on all data:'.format(i+1))
+            m , b = lin_reg_fit(np.log10(1.0/hs[i]),np.log10(errs[i]))
+            print(m)
+ 
+    plt.title('Error vs. h where h = 1/n')
+    plt.legend(ncol = 2, loc="upper left", shadow=True)
+    plt.xlabel('h')
+    plt.ylabel('Error', rotation=90)
+    plt.savefig('conv.eps', format='eps')
+    plt.savefig('conv.png')
+    #plt.show()
 
 
-    
+def lin_reg_fit(x,y):
 
-if __name__ == "__main__":
+    if x.shape != y.shape:
+        print('input size mismatch')
+    else:
+        n = x.size
+    xy = x * y
+    x_sq = x**2
+    sum_x = np.sum(x)
+    sum_y = np.sum(y)
+    sum_xy = np.sum(x*y)
+    sum_x_sq = np.sum(x_sq)
+    #slope
+    m = (n * sum_xy - sum_x * sum_y) /(n * sum_x_sq - sum_x**2)
+    #b
+    b = (sum_y - m * sum_x) / n
+    return m, b
 
-    folder_name = 'log_files'
-    #folder_name = 'log_files_linE_cpus_1_and_4_small_meshes'
+def run_conv():
+    folder_name = 'convergence'
     filename_ext = '.log'
     #idx: 0   1   2      3     4  5 6 7  8  9  10  11
     #    293_linE_nu_0.499999_deg_3_h_8_cpu_64_run_3.log
@@ -612,7 +215,6 @@ if __name__ == "__main__":
     logfile_keywords = ['Global nodes','Total KSP Iterations', 'SNES Solve Time', \
                         'DoFs/Sec in SNES', 'L2 Error', './elasticity', 'Time (sec):', 'script']
                                         #line containing ./elasticity has number of processors
-     
     appCtx=AppCtx()
     #filename attributes for appCtx
     appCtx.filename_ext = filename_ext
@@ -624,30 +226,152 @@ if __name__ == "__main__":
     appCtx.logfile_keywords = logfile_keywords
 
     #parse files and filenames
-    filenames_data , files_data = parse_log_files(folder_name, appCtx)
-
-   
+    filenames_data , files_data = parse_log_files(folder_name, appCtx)   
     #create a dataframe
     df = create_df_linE_noether(filenames_data , files_data)
+    plot_conv_2D(df)
 
-    #Does not look good
-    #plot_linE_noether_3D(df)
+def plot_time_err(df):
+    #filters:
+    #p 
+    p1 = df['p']==1
+    p2 = df['p']==2
+    p3 = df['p']==3
+    p4 = df['p']==4
+    # np (num processors)
+    np1 = df['np']== 1
+    np4 = df['np']== 4
+    np16 = df['np']==16
+    np32 = df['np']==32
+    np64 = df['np']==64
+    # nu
+    nu3 = df['nu']==0.3
+    nu49 = df['nu']==0.49
+    nu49999 = df['nu']==0.49999
+    nu499999 = df['nu']>(0.49999) #For some reason nu499999 = df['nu']==0.499999 does not work!
+    #
+    #err_4 means error with the order of 10^(-4) 
+    err_4 = ((df['L2 Error'] < 1e-3) & (df['L2 Error'] > 1e-4))
+    #err_5 means error with the order of 10^(-5)
+    err_5 = ((df['L2 Error'] < 1e-4) & (df['L2 Error'] > 1e-5))
+    #err_5 means error with the order of 10^(-6)
+    err_6 = ((df['L2 Error'] < 1e-5) & (df['L2 Error'] > 1e-6))
 
-    #plot_linE_noether_2D(df)
-    #print(df)
-    create_hp_tables(df)
+    #np
+    nps = [np1, np4, np16, np32, np64]
+
+    #We have err_4, err_5 and err_6 for nu = 0.3 and nu = 0.49
+    err_nu_comp = [err_4,err_5,err_6]    
+
+    proc=[1,4,16,32,64]
+    pComp = [p1,p2,p3,p4]
+    
+    legend_elements = [Line2D([0], [0], marker='s', color='k', label='p1'),
+                       Line2D([0], [0], marker='s', color='b', label='p2'),
+                       Line2D([0], [0], marker='s', color='r', label='p3'),
+                       Line2D([0], [0], marker='s', color='g', label='p4'),
+                       Line2D([0], [0], marker='p', label='1 cpu', markersize=10),
+                       Line2D([0], [0], marker='*', label='4 cpu', markersize=10),
+                       Line2D([0], [0], marker='o', label='16 cpu', markersize=10),
+                       Line2D([0], [0], marker='^', label='32 cpu', markersize=10),
+                       Line2D([0], [0], marker='8', label='64 cpu', markersize=10)]
+
+    #We'd plot accuracy versus time on a log-log chart with color for degree and marker size for number of cores.
+    
+                
+    plt_marker = ['p', '*' , 'o', '^', '8']
+                # p1   p2    p3   p4
+    plt_color = ['k', 'b', 'r', 'g'] 
+    fig, ax = plt.subplots(2,2)
+    for err in err_nu_comp:
+        for i in range(len(pComp)):
+            for j in range(len(nps)):
+                tt = df.where((nu3 & pComp[i] & nps[j] & err))['Total Time(s)'].dropna()
+                ee = df.where((nu3 & pComp[i] & nps[j] & err))['L2 Error'].dropna()
+                ax[0][0].loglog(tt, ee, c=plt_color[i], marker=plt_marker[j]) 
+                ax[0][0].set_ylabel('Error')
+                #ax[0][0].set_xlabel('Time(s)')
+                ax[0][0].set_title(r'$\nu = 0.3$')
+                ax[0][0].legend(ncol=10, handles=legend_elements, loc="upper center", bbox_to_anchor=(1.1, 1.25), shadow=True)
+
+    #We have err_4 and err_5 for nu = 0.49999 and nu = 0.499999
+    err_nu_incomp = [err_4,err_5]
+    pIncomp = [p2,p3,p4]
+    for err in err_nu_incomp:
+        for i in range(len(pIncomp)):
+            for j in range(len(nps)):
+                tt = df.where((nu49 & pIncomp[i] & nps[j] & err))['Total Time(s)'].dropna()
+                ee = df.where((nu49 & pIncomp[i] & nps[j] & err))['L2 Error'].dropna()
+                ax[0][1].loglog(tt, ee, c=plt_color[i], marker=plt_marker[j]) 
+                ax[0][1].set_ylabel('Error')
+                #ax[0][1].set_xlabel('Time(s)')
+                ax[0][1].set_title(r'$\nu = 0.49$')
+
+    for err in err_nu_incomp:
+        for i in range(len(pIncomp)):
+            for j in range(len(nps)):
+                tt = df.where((nu49999 & pIncomp[i] & nps[j] & err))['Total Time(s)'].dropna()
+                ee = df.where((nu49999 & pIncomp[i] & nps[j] & err))['L2 Error'].dropna()
+                ax[1][0].loglog(tt, ee, c=plt_color[i], marker=plt_marker[j]) 
+                ax[1][0].set_ylabel('Error')
+                ax[1][0].set_xlabel('Time(s)')
+                ax[1][0].set_title(r'$\nu = 0.49999$')
+
+    for err in err_nu_incomp:
+        for i in range(len(pIncomp)):
+            for j in range(len(nps)):
+                tt = df.where((nu499999 & pIncomp[i] & nps[j] & err))['Total Time(s)'].dropna()
+                ee = df.where((nu499999 & pIncomp[i] & nps[j] & err))['L2 Error'].dropna()
+                ax[1][1].loglog(tt, ee, c=plt_color[i], marker=plt_marker[j]) 
+                ax[1][1].set_ylabel('Error')
+                ax[1][1].set_xlabel('Time(s)')
+                ax[1][1].set_title(r'$\nu = 0.499999$')
+ 
+    figure = plt.gcf()  # get current figure
+    figure.set_size_inches(32, 18) # set figure's size manually to your full screen (32x18)
+    plt.show()
+
+##  plt.savefig('hp.eps', format='eps')
+
+def run_time_err():
+    folder_name = 'log_files'
+    filename_ext = '.log'
+    #idx: 0   1   2      3     4  5 6 7  8  9  10  11
+    #    293_linE_nu_0.499999_deg_3_h_8_cpu_64_run_3.log
+    keep_idx = [3,5,7,11]
+
+    logfile_keywords = ['Global nodes','Total KSP Iterations', 'SNES Solve Time', \
+                        'DoFs/Sec in SNES', 'L2 Error', './elasticity', 'Time (sec):', 'script']
+                                        #line containing ./elasticity has number of processors
+    appCtx=AppCtx()
+    #filename attributes for appCtx
+    appCtx.filename_ext = filename_ext
+    appCtx.keep_idx = keep_idx
+    appCtx.parse_filename = parse_filename_linE_noether #function pointer
+    
+    #file content attributes for appCtx
+    appCtx.parse_file_content = parse_file_content_linE_noether #function pointer
+    appCtx.logfile_keywords = logfile_keywords
+
+    #parse files and filenames
+    filenames_data , files_data = parse_log_files(folder_name, appCtx)   
+    #create a dataframe
+    df = create_df_linE_noether(filenames_data , files_data)
+    plot_time_err(df)
+    
+       
+
+if __name__ == "__main__":
+
+    #convergence plot
+    #run_conv()
+    # Jed's requested plot
+    run_time_err()
 
     
-
-    
-    
-
-    
-
     
 
 
-    #df.to_csv(r'data.csv', index = False, header=True)
     
 
     
