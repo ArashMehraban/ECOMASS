@@ -100,7 +100,7 @@ def create_df_linE_noether(filenames_data , files_data):
     df_vals[:,8] *= 3
     
     df = pd.DataFrame(df_vals, columns = df_cols)
-    pd.set_option("display.max_rows", None, "display.max_columns", None, 'display.width', None, 'display.max_colwidth', -1)
+    pd.set_option("display.max_rows", None, "display.max_columns", None, 'display.width', None, 'display.max_colwidth', None)
 
     df = df.sort_values(['np', 'nu', 'p', 'h', 'run'], ascending = (True, True,True,True,True))
 
